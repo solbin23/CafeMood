@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: cafeMood
+
+admin:
+  id: admin
+  password: ""
