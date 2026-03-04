@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -20,8 +21,17 @@ public class CafeTagAggregate {
     @Column(name = "tag_id",nullable = false)
     private Long tagId;
 
+    @Column(name = "total_count", nullable = false)
+    private int totalCount;
+
+    @Column(name = "unique_user_count", nullable = false)
+    private int uniqueUserCount;
+
+    @Column(name = "last_vote_date", nullable = false)
+    private Instant lastVoteDate = Instant.now();
 
 
+    protected CafeTagAggregate() {}
 
     public static class Pk implements Serializable {
         public Long cafeId;
