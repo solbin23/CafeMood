@@ -19,24 +19,50 @@ public class AdminCafeService {
 
 
     @Transactional
-    public AdminCafeResponse createCafe(AdminCafeCreateRequest req) {
-        return null;
+    public AdminCafeResponse create(AdminCafeCreateRequest req) {
+        adminCafeValidator.validateCreate(req);
+
+        Cafe cafe = Cafe.create(req.name(), req.shortDesc(), req.phone());
+
+        Cafe savedCafe = cafeRepo.save(cafe);
+        return AdminCafeResponse.from(savedCafe);
     }
 
     @Transactional
-    public AdminCafeResponse updateCafe(Long id, AdminCafeUpdateRequest req) {
+    public AdminCafeResponse update(Long id, AdminCafeUpdateRequest req) {
         adminCafeValidator.validateUpdate(req);
 
-        Cafe cafe = cafeRepo.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("카페를 찾을 수 없습니다."));
+        Cafe updateCafe = cafeRepo.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("cafe not found : " + id));
 
-        if (req.instagramUrl() != null) {
-            throw new IllegalArgumentException("이미 존재하는 instagramUrl 입니다.");
+        if (req.name() != null && req.name().isEmpty()) {
+            updateCafe.updateName(req.name());
         }
 
-        if (req.name() != null) {
-            cafe
+        if(req.phone() != null && req.phone().isEmpty()) {
+            updateCafe.updatePhone(req.phone());
         }
+        return AdminCafeResponse.from(updateCafe);
+    }
+
+
+    @Transactional
+    public AdminCafeResponse publish(Long id){
+        Cafe publishCafe = cafeRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("cafe not found"+ id));
+
+        publishCafe.publish();
+
+        return AdminCafeResponse.from(publishCafe);
+    }
+
+    @Transactional
+    public AdminCafeResponse hide(Long id){
+        Cafe hideCafe = cafeRepo.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("cafe not found"+ id));
+
+        hideCafe.hide();
+        return AdminCafeResponse.from(hideCafe);
     }
 
 }

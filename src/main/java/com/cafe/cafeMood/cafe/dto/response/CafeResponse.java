@@ -3,13 +3,17 @@ package com.cafe.cafeMood.cafe.dto.response;
 import com.cafe.cafeMood.cafe.domain.Cafe;
 import com.cafe.cafeMood.cafe.domain.CafeStatus;
 
-
 import java.time.Instant;
 
-public record AdminCafeResponse(Long id, String name, String shortDesc, CafeStatus status, Instant createDate, Instant updateDate) {
+public record CafeResponse(Long cafeId,
+                           String name,
+                           String shortDesc,
+                           CafeStatus cafeStatus,
+                           Instant createDate,
+                           Instant updateDate) {
 
-    public static AdminCafeResponse from(Cafe cafe){
-        return new AdminCafeResponse(
+    public static CafeResponse from(Cafe cafe) {
+        return new CafeResponse(
                 cafe.getId(),
                 cafe.getName(),
                 cafe.getShortDesc(),
@@ -18,5 +22,6 @@ public record AdminCafeResponse(Long id, String name, String shortDesc, CafeStat
                 cafe.getUpdateDate()
         );
     }
-
 }
+
+
