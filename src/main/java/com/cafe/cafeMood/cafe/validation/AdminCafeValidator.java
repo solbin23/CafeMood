@@ -36,4 +36,8 @@ public class AdminCafeValidator extends ValidatorSupport {
 
     }
 
+    public void validatePublish(AdminCafeCreateRequest req) {
+    //수정 진행중
+    }
+
 }

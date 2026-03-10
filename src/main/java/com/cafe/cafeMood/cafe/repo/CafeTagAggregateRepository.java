@@ -1,6 +1,6 @@
 package com.cafe.cafeMood.cafe.repo;
 
-import com.cafe.cafeMood.cafe.domain.CafeTagAggregate;
+import com.cafe.cafeMood.cafe.domain.tag.CafeTagAggregate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

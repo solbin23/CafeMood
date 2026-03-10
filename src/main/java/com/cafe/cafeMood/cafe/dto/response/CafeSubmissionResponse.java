@@ -1,7 +1,7 @@
 package com.cafe.cafeMood.cafe.dto.response;
 
-import com.cafe.cafeMood.cafe.domain.CafeSubmission;
-import com.cafe.cafeMood.cafe.domain.CafeSubmissionStatus;
+import com.cafe.cafeMood.cafe.domain.submission.CafeSubmission;
+import com.cafe.cafeMood.cafe.domain.submission.CafeSubmissionStatus;
 
 import java.time.Instant;
 

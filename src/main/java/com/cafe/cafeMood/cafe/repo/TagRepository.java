@@ -1,7 +1,7 @@
 package com.cafe.cafeMood.cafe.repo;
 
-import com.cafe.cafeMood.cafe.domain.Tag;
-import com.cafe.cafeMood.cafe.domain.TagStatus;
+import com.cafe.cafeMood.cafe.domain.tag.Tag;
+import com.cafe.cafeMood.cafe.domain.tag.TagStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.domain;
+package com.cafe.cafeMood.cafe.domain.tag;
 
 import jakarta.persistence.*;
 import lombok.Getter;

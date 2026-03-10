@@ -1,10 +1,11 @@
 package com.cafe.cafeMood.cafe.service;
 
-import com.cafe.cafeMood.cafe.domain.Cafe;
+import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeCreateRequest;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeUpdateRequest;
 import com.cafe.cafeMood.cafe.dto.response.AdminCafeResponse;
 import com.cafe.cafeMood.cafe.repo.CafeRepository;
+import com.cafe.cafeMood.cafe.repo.CafeSubmissionRepository;
 import com.cafe.cafeMood.cafe.validation.AdminCafeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class AdminCafeService {
 
     private final CafeRepository cafeRepo;
     private final AdminCafeValidator adminCafeValidator;
+    private final CafeSubmissionRepository cafeSubmissionRepo;
 
 
     @Transactional

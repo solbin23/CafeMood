@@ -1,6 +1,5 @@
-package com.cafe.cafeMood.cafe.domain;
+package com.cafe.cafeMood.cafe.domain.cafe;
 
-import com.cafe.cafeMood.cafeList.domain.enums.CafeListStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

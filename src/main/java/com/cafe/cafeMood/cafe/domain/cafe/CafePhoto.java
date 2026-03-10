@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.domain;
+package com.cafe.cafeMood.cafe.domain.cafe;
 
 import jakarta.persistence.*;
 
