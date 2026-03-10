@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.repo;
+package com.cafe.cafeMood.cafe.repo.tag;
 
 import com.cafe.cafeMood.cafe.domain.tag.Tag;
 import com.cafe.cafeMood.cafe.domain.tag.TagStatus;

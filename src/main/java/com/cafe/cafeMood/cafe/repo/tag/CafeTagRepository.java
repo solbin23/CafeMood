@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.repo;
+package com.cafe.cafeMood.cafe.repo.tag;
 
 import com.cafe.cafeMood.cafe.domain.tag.CafeTag;
 import org.springframework.data.jpa.repository.JpaRepository;
