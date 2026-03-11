@@ -48,6 +48,19 @@ public class CafeSubmission {
 
 
     private CafeSubmission(Long ownerUserId, String name, String shortDesc, String address) {
+
+        if (ownerUserId == null || ownerUserId <= 0) {
+            throw new IllegalArgumentException("login required");
+        }
+
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name required");
+        }
+
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException("address required");
+        }
+
         this.ownerUserId = ownerUserId;
         this.name = name;
         this.shortDesc = shortDesc;
@@ -62,6 +75,10 @@ public class CafeSubmission {
     }
 
     public void startReview(){
+
+        if(this.status != CafeSubmissionStatus.REQUESTED) {
+            throw new IllegalArgumentException("invalid review status");
+        }
         this.status = CafeSubmissionStatus.REVIEW;
         update();
     }

@@ -38,6 +38,10 @@ public class Cafe {
     private CafeStatus status = CafeStatus.DRAFT;
 
     private Cafe(String name, String shortDesc, String phone) {
+
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Cafe name is null or empty");
+        }
         this.name = name;
         this.shortDesc = shortDesc;
         this.phone = phone;
@@ -51,20 +55,40 @@ public class Cafe {
     }
 
     public void updateName(String name) {
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("name must not be null or empty");
+        }
         this.name = name;
-        this.updateDate = Instant.now();
+        touchDate();
     }
 
     public void updatePhone(String phone){
         this.phone = phone;
-        this.updateDate = Instant.now();
+        touchDate();
+    }
+
+    public void changeShortDesc(String shortDesc){
+        this.shortDesc = shortDesc;
+        touchDate();
     }
     public void publish() {
+        if(this.status == CafeStatus.PUBLISHED){
+            throw new IllegalStateException("Cafe is already published");
+        }
         this.status = CafeStatus.PUBLISHED;
+        this.updateDate = Instant.now();
     }
 
     public void hide() {
+        if (this.status == CafeStatus.HIDDEN){
+            throw new IllegalStateException("Cafe is already hidden");
+        }
         this.status = CafeStatus.HIDDEN;
+        touchDate();
+    }
+
+    private void touchDate(){
+        this.updateDate = Instant.now();
     }
 }
 

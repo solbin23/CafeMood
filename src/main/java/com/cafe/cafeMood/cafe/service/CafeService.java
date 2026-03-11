@@ -24,6 +24,10 @@ public class CafeService {
     }
 
     public CafeResponse getCafe(Long cafeId){
+
+        if(cafeId == null || cafeId <= 0) {
+            throw new IllegalArgumentException("cafeId is null or empty");
+        }
         Cafe cafe = cafeRepo.findById(cafeId)
                 .orElseThrow(()-> new IllegalArgumentException("cafe not found"));
 

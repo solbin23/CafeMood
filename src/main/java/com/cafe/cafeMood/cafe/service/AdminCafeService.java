@@ -1,9 +1,11 @@
 package com.cafe.cafeMood.cafe.service;
 
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
+import com.cafe.cafeMood.cafe.domain.submission.CafeSubmission;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeCreateRequest;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeUpdateRequest;
 import com.cafe.cafeMood.cafe.dto.response.AdminCafeResponse;
+import com.cafe.cafeMood.cafe.dto.response.CafeSubmissionResponse;
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
 import com.cafe.cafeMood.cafe.repo.submission.CafeSubmissionRepository;
 import com.cafe.cafeMood.cafe.validation.AdminCafeValidator;
@@ -22,7 +24,9 @@ public class AdminCafeService {
 
     @Transactional
     public AdminCafeResponse create(AdminCafeCreateRequest req) {
-        adminCafeValidator.validateCreate(req);
+        if(req.name() == null || req.name().trim().isEmpty()) {
+            throw new IllegalArgumentException("name required");
+        }
 
         Cafe cafe = Cafe.create(req.name(), req.shortDesc(), req.phone());
 
@@ -65,6 +69,39 @@ public class AdminCafeService {
 
         hideCafe.hide();
         return AdminCafeResponse.from(hideCafe);
+    }
+
+    @Transactional
+    public CafeSubmissionResponse approveSubmission(Long id) {
+        CafeSubmission cafeSubmission = cafeSubmissionRepo.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("submission not found"+ id));
+
+        cafeSubmission.startReview();
+
+        Cafe cafe = Cafe.create(
+                cafeSubmission.getName(),
+                cafeSubmission.getShortDesc(),
+                cafeSubmission.getAddress()
+        );
+
+        cafe.publish();
+
+        Cafe savedCafe = cafeRepo.save(cafe);
+        cafeSubmission.approve(savedCafe.getId());
+        return CafeSubmissionResponse.from(cafeSubmission);
+    }
+
+
+    @Transactional
+    public CafeSubmissionResponse rejectSubmission(Long id, String reviewComment) {
+
+        CafeSubmission submission = cafeSubmissionRepo.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("submission not found"+ id));
+
+        submission.startReview();
+        submission.reject(reviewComment);
+
+        return CafeSubmissionResponse.from(submission);
     }
 
 }

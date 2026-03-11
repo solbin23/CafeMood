@@ -9,11 +9,19 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Table(name = "cafe_tag")
+@Table(name = "cafe_tag",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_cafe_tag",
+                columnNames = {"cafe_id","tag_id"}
+        )
+)
 @IdClass(CafeTag.Pk.class)
 public class CafeTag {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "cafe_id", nullable = false)
     private Long cafeId;
 

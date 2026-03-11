@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CafeSubmissionRepository extends JpaRepository<CafeSubmission, Long> {
 
-    List<CafeSubmission> findByOwnerUserIdOrderByIdDesc(String ownerUserId);
+    List<CafeSubmission> findByOwnerUserIdOrderByIdDesc(Long ownerUserId);
 }

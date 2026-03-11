@@ -33,10 +33,29 @@ public class CafeTagAggregate {
 
     protected CafeTagAggregate() {}
 
+    public CafeTagAggregate(Long cafeId, Long tagId) {
+        this.cafeId = cafeId;
+        this.tagId = tagId;
+        this.totalCount = 0;
+        this.uniqueUserCount = 0;
+        this.lastVoteDate = Instant.now();
+
+    }
+
+    public void increase(int totalInc, int uniqueInc) {
+        this.totalCount += totalInc;
+        this.uniqueUserCount += uniqueInc;
+        this.lastVoteDate = Instant.now();
+    }
     public static class Pk implements Serializable {
         public Long cafeId;
         public Long tagId;
         public Pk() {}
+
+        public Pk(Long cafeId, Long tagId) {
+            this.cafeId = cafeId;
+            this.tagId = tagId;
+        }
     }
 
     @Override
