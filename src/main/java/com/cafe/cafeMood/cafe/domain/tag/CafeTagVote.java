@@ -1,15 +1,16 @@
 package com.cafe.cafeMood.cafe.domain.tag;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Getter
-@Table(name = "cafe_tag_vote", indexes = {@Index(name = "idx_vote_cafe",columnList = "cafe_id")
-,@Index(name = "idx_vote_tag",columnList = "tag_id"),
-@Index(name = "idx_vote_user",columnList = "user_id")})
+@Table(name = "cafe_tag_vote")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CafeTagVote {
 
     @Id
@@ -26,14 +27,16 @@ public class CafeTagVote {
     private Long tagId;
 
     @Column(name = "create_date", nullable = false)
-    private Instant createDate = Instant.now();
+    private Instant createDate;
 
-    protected CafeTagVote(){
-
-    }
     public CafeTagVote(Long cafeId, Long userId, Long tagId) {
         this.cafeId = cafeId;
         this.userId = userId;
         this.tagId = tagId;
+        this.createDate = Instant.now();
+    }
+
+    public static CafeTagVote create(Long cafeId, Long userId, Long tagId) {
+        return new CafeTagVote(cafeId, userId, tagId);
     }
 }

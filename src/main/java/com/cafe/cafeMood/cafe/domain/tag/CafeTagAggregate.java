@@ -1,7 +1,9 @@
 package com.cafe.cafeMood.cafe.domain.tag;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -11,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Table(name = "cafe_tag_aggregate")
 @IdClass(CafeTagAggregate.Pk.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CafeTagAggregate {
 
     @Id
@@ -31,15 +34,17 @@ public class CafeTagAggregate {
     private Instant lastVoteDate = Instant.now();
 
 
-    protected CafeTagAggregate() {}
-
-    public CafeTagAggregate(Long cafeId, Long tagId) {
+    private CafeTagAggregate(Long cafeId, Long tagId) {
         this.cafeId = cafeId;
         this.tagId = tagId;
         this.totalCount = 0;
         this.uniqueUserCount = 0;
         this.lastVoteDate = Instant.now();
 
+    }
+
+    public static CafeTagAggregate create(Long cafeId, Long tagId){
+       return new CafeTagAggregate(cafeId, tagId);
     }
 
     public void increase(int totalInc, int uniqueInc) {

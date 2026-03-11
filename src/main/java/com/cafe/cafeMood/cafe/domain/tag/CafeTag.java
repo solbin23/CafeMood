@@ -1,7 +1,9 @@
 package com.cafe.cafeMood.cafe.domain.tag;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -15,7 +17,7 @@ import java.util.Objects;
                 columnNames = {"cafe_id","tag_id"}
         )
 )
-@IdClass(CafeTag.Pk.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CafeTag {
 
     @Id
@@ -25,7 +27,6 @@ public class CafeTag {
     @Column(name = "cafe_id", nullable = false)
     private Long cafeId;
 
-    @Id
     @Column(name = "tag_id", nullable = false)
     private Long tagId;
 
@@ -33,33 +34,25 @@ public class CafeTag {
     private int score;
 
     @Column(name = "created_date", nullable = false)
-    private Instant createDate = Instant.now();
+    private Instant createDate;
 
-    protected CafeTag(){}
-    public CafeTag(Long cafeId, Long tagId, int score) {
+    @Column(name = "update_date", nullable = false)
+    private Instant updateDate;
+
+    private CafeTag(Long cafeId, Long tagId, int score) {
         this.cafeId = cafeId;
         this.tagId = tagId;
         this.score = score;
+        this.createDate = Instant.now();
+        this.updateDate = Instant.now();
     }
 
-    public static class Pk implements Serializable {
-        public Long cafeId;
-        public Long tagId;
-        public Pk(){}
-        @Override
-        public boolean equals(Object obj) {
-            if(this == obj) {
-                return true;
-            }
-            if (!(obj instanceof Pk pk)) {
-                return false;
-            }
-            return Objects.equals(cafeId, pk.cafeId) && Objects.equals(tagId, pk.tagId);
-        }
+    public static CafeTag create(Long cafeId, Long tagId, int score) {
+        return new CafeTag(cafeId, tagId, score);
+    }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(cafeId, tagId);
-        }
+    public void updateScore(int score) {
+        this.score = score;
+        this.updateDate = Instant.now();
     }
 }

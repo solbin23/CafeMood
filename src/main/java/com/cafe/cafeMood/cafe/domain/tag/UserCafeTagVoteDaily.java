@@ -1,7 +1,9 @@
 package com.cafe.cafeMood.cafe.domain.tag;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -10,11 +12,17 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Table(name = "user_cafe_tag_vote_daily", uniqueConstraints = @UniqueConstraint(name = "uk_daily_vote", columnNames = {"cafe_id","user_id","tag_id","vote_date"}))
-@IdClass(UserCafeTagVoteDaily.Pk.class)
+@Table(name = "user_cafe_tag_vote_daily", uniqueConstraints = @UniqueConstraint(name = "uk_daily_vote", columnNames = {"cafe_id","user_id","tag_id","vote_date"}),
+        indexes = {@Index(name = "idx_daily_cafe",columnList = "cafe_id"),
+                   @Index(name = "idx_daily_user", columnList = "user_id"),
+                   @Index(name = "idx_daily_vote_date", columnList = "vote_date")})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserCafeTagVoteDaily {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "cafe_id",nullable = false)
     private long cafeId;
 
@@ -34,38 +42,26 @@ public class UserCafeTagVoteDaily {
     private Instant createDate = Instant.now();
 
 
-    protected UserCafeTagVoteDaily() {}
-
-    public UserCafeTagVoteDaily(long cafeId,long userId, long tagId, LocalDate voteDate) {
+    private UserCafeTagVoteDaily(long cafeId,long userId, long tagId, LocalDate voteDate) {
         this.cafeId = cafeId;
         this.userId = userId;
         this.tagId = tagId;
         this.voteDate = voteDate;
+        this.createDate = Instant.now();
     }
 
-    public static class Pk implements Serializable {
-        public Long cafeId;
-        public Long userId;
-        public Long tagId;
-        public LocalDate voteDate;
-        public Pk(){}
+    public static UserCafeTagVoteDaily create(Long cafeId, Long userId, Long tagId, LocalDate voteDate) {
 
+        if (cafeId == null || cafeId <= 0) {
+            throw new IllegalArgumentException("invalid cafe id");
+        }
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("invalid user id");
+        }
+        if (tagId == null || tagId <= 0) {
+            throw new IllegalArgumentException("invalid tag id");
+        }
+        return new UserCafeTagVoteDaily(cafeId, userId, tagId, voteDate);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if(!(obj instanceof Pk pk)) return false;
-        return Objects.equals(cafeId,pk.cafeId)
-                && Objects.equals(userId,pk.userId)
-                && Objects.equals(tagId,pk.tagId)
-                && Objects.equals(voteDate,pk.voteDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(cafeId,userId,tagId,voteDate);
-    }
-
 
 }
