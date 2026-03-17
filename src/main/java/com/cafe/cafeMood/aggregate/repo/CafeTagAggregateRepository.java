@@ -1,6 +1,7 @@
 package com.cafe.cafeMood.aggregate.repo;
 
 import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
+import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -15,15 +16,11 @@ public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggrega
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select a from CafeTagAggregate a where a.cafeId = :cafeId and a.tagId = :tagId")
-    Optional<CafeTagAggregate> findByCafeIdAndTagIdForUpdate(Long cafeId, Long tagId);
+    Optional<CafeTagAggregate> findForUpdate(@Param("cafeId") Long cafeId, @Param("tagId") Long tagId);
 
 
-    @Query(value = """
-    SELECT * FROM cafe_tag_aggregate
-    WHERE cafe_id = :cafeId
-    ORDER BY total_count DESC , unique_user_count DESC, last_vote_date DESC
-    LIMIT :limit
-    """, nativeQuery = true)
-    List<CafeTagAggregate> findTopByCafeId(long cafeId, int limit);
+    List<CafeTagAggregate> findTopByTagIdOrderByScoreDescCountDesc(Long tagId);
+
+    List<CafeTagAggregate> findAllByCafeId(Long cafeId);
 }
 
