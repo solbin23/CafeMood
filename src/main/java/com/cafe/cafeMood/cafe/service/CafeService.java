@@ -3,38 +3,71 @@ package com.cafe.cafeMood.cafe.service;
 
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.domain.cafe.CafeStatus;
-import com.cafe.cafeMood.cafe.dto.response.CafeResponse;
+import com.cafe.cafeMood.cafe.dto.request.cafe.CafeCreateRequest;
+import com.cafe.cafeMood.cafe.dto.request.cafe.CafeUpdateRequest;
+import com.cafe.cafeMood.cafe.dto.response.cafe.CafeResponse;
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
+import com.cafe.cafeMood.common.exception.BusinessException;
+import com.cafe.cafeMood.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CafeService {
-    private final CafeRepository cafeRepo;
+    private final CafeRepository cafeRepository;
 
-    public List<CafeResponse> getPublishedCafe() {
-        List<Cafe> cafes = cafeRepo.findByStatusOrderByIdDesc(CafeStatus.PUBLISHED);
-        return cafes.stream().map(CafeResponse::from)
-                .toList();
+    @Transactional
+    public CafeResponse createCafe(CafeCreateRequest request) {
+        Cafe cafe = Cafe.create(
+                request.ownerId(),
+                request.name(),
+                request.address(),
+                request.phoneNumber(),
+                request.shortDesc()
+        );
+        Cafe savedCafe = cafeRepository.save(cafe);
+        return CafeResponse.from(savedCafe);
     }
 
     public CafeResponse getCafe(Long cafeId){
-
-        if(cafeId == null || cafeId <= 0) {
-            throw new IllegalArgumentException("cafeId is null or empty");
-        }
-        Cafe cafe = cafeRepo.findById(cafeId)
-                .orElseThrow(()-> new IllegalArgumentException("cafe not found"));
-
-        if (cafe.getStatus() != CafeStatus.PUBLISHED) {
-            throw new IllegalArgumentException("cafe is not published");
-        }
+        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
+                .orElseThrow(()-> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
 
         return CafeResponse.from(cafe);
+    }
+
+    @Transactional
+    public CafeResponse updateCafe(Long cafeId, CafeUpdateRequest request) {
+        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
+                .orElseThrow(()-> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
+
+        cafe.updateInfo(
+                request.name(),
+                request.address(),
+                request.phone(),
+                request.shortDesc()
+        );
+
+        return CafeResponse.from(cafe);
+    }
+
+    @Transactional
+    public CafeResponse requestApproval(Long cafeId){
+        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
+                .orElseThrow(()-> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
+
+        cafe.requestApproval();
+        return CafeResponse.from(cafe);
+    }
+
+    @Transactional
+    public void deleteCafe(Long cafeId,String deletedBy){
+        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
+                .orElseThrow(()-> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
+
+        cafe.delete(deletedBy);
     }
 }

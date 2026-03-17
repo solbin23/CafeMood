@@ -5,7 +5,7 @@ import com.cafe.cafeMood.cafe.domain.submission.CafeSubmission;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeCreateRequest;
 import com.cafe.cafeMood.cafe.dto.request.AdminCafeUpdateRequest;
 import com.cafe.cafeMood.cafe.dto.response.AdminCafeResponse;
-import com.cafe.cafeMood.cafe.dto.response.CafeSubmissionResponse;
+import com.cafe.cafeMood.cafe.dto.response.cafe.CafeSubmissionResponse;
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
 import com.cafe.cafeMood.cafe.repo.submission.CafeSubmissionRepository;
 import com.cafe.cafeMood.cafe.validation.AdminCafeValidator;
@@ -18,90 +18,5 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminCafeService {
 
     private final CafeRepository cafeRepo;
-    private final AdminCafeValidator adminCafeValidator;
-    private final CafeSubmissionRepository cafeSubmissionRepo;
-
-
-    @Transactional
-    public AdminCafeResponse create(AdminCafeCreateRequest req) {
-        if(req.name() == null || req.name().trim().isEmpty()) {
-            throw new IllegalArgumentException("name required");
-        }
-
-        Cafe cafe = Cafe.create(req.name(), req.shortDesc(), req.phone());
-
-        Cafe savedCafe = cafeRepo.save(cafe);
-        return AdminCafeResponse.from(savedCafe);
-    }
-
-    @Transactional
-    public AdminCafeResponse update(Long id, AdminCafeUpdateRequest req) {
-        adminCafeValidator.validateUpdate(req);
-
-        Cafe updateCafe = cafeRepo.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("cafe not found : " + id));
-
-        if (req.name() != null && req.name().isEmpty()) {
-            updateCafe.updateName(req.name());
-        }
-
-        if(req.phone() != null && req.phone().isEmpty()) {
-            updateCafe.updatePhone(req.phone());
-        }
-        return AdminCafeResponse.from(updateCafe);
-    }
-
-
-    @Transactional
-    public AdminCafeResponse publish(Long id){
-        Cafe publishCafe = cafeRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("cafe not found"+ id));
-
-        publishCafe.publish();
-
-        return AdminCafeResponse.from(publishCafe);
-    }
-
-    @Transactional
-    public AdminCafeResponse hide(Long id){
-        Cafe hideCafe = cafeRepo.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("cafe not found"+ id));
-
-        hideCafe.hide();
-        return AdminCafeResponse.from(hideCafe);
-    }
-
-    @Transactional
-    public CafeSubmissionResponse approveSubmission(Long id) {
-        CafeSubmission cafeSubmission = cafeSubmissionRepo.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("submission not found"+ id));
-
-        cafeSubmission.startReview();
-
-        Cafe cafe = Cafe.create(
-                cafeSubmission.getName(),
-                cafeSubmission.getShortDesc(),
-                cafeSubmission.getAddress()
-        );
-
-        cafe.publish();
-
-        Cafe savedCafe = cafeRepo.save(cafe);
-        cafeSubmission.approve(savedCafe.getId());
-        return CafeSubmissionResponse.from(cafeSubmission);
-    }
-
-
-    @Transactional
-    public CafeSubmissionResponse rejectSubmission(Long id, String reviewComment) {
-
-        CafeSubmission submission = cafeSubmissionRepo.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("submission not found"+ id));
-
-        submission.startReview();
-        submission.reject(reviewComment);
-
-        return CafeSubmissionResponse.from(submission);
-    }
 
 }

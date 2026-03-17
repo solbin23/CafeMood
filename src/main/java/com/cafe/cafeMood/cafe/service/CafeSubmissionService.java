@@ -2,8 +2,8 @@ package com.cafe.cafeMood.cafe.service;
 
 
 import com.cafe.cafeMood.cafe.domain.submission.CafeSubmission;
-import com.cafe.cafeMood.cafe.dto.request.CafeSubmissionCreateRequest;
-import com.cafe.cafeMood.cafe.dto.response.CafeSubmissionResponse;
+import com.cafe.cafeMood.cafe.dto.request.cafe.CafeSubmissionCreateRequest;
+import com.cafe.cafeMood.cafe.dto.response.cafe.CafeSubmissionResponse;
 import com.cafe.cafeMood.cafe.repo.submission.CafeSubmissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

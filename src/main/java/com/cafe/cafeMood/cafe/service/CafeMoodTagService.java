@@ -2,12 +2,13 @@ package com.cafe.cafeMood.cafe.service;
 
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.domain.cafe.CafeStatus;
-import com.cafe.cafeMood.cafe.domain.tag.CafeTag;
-import com.cafe.cafeMood.cafe.domain.tag.CafeTagAggregate;
-import com.cafe.cafeMood.cafe.domain.tag.UserCafeTagVoteDaily;
-import com.cafe.cafeMood.cafe.dto.response.CafeTagVoteResultResponse;
+import com.cafe.cafeMood.cafe.domain.tag.*;
+import com.cafe.cafeMood.cafe.dto.response.cafe.CafeTagVoteResultResponse;
+import com.cafe.cafeMood.cafe.dto.response.MoodTagResponse;
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
 import com.cafe.cafeMood.cafe.repo.tag.*;
+import com.cafe.cafeMood.tag.*;
+import com.cafe.cafeMood.tag.domain.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,7 @@ public class CafeMoodTagService {
 
     @Transactional
     public CafeTagVoteResultResponse vote(Long cafeId, Long tagId, Long userId) {
+        System.out.println("vote() called");
 
         if(cafeId == null || cafeId <= 0) {
             throw new IllegalArgumentException("invalid cafe id");
@@ -48,6 +52,7 @@ public class CafeMoodTagService {
             throw new IllegalArgumentException("invalid user id");
         }
 
+        System.out.println("findById path");
         Cafe cafe = cafeRepository.findById(cafeId)
                 .orElseThrow(() -> new IllegalArgumentException("cafe not found"));
 
@@ -55,7 +60,22 @@ public class CafeMoodTagService {
             throw new IllegalArgumentException("cafe status is not published");
         }
 
-        return null;
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("tag not found"));
+
+        if(!tag.isActive()) {
+            throw new IllegalArgumentException("tag is not active");
+        }
+
+        boolean counted = tryDailyVote(cafeId, tagId, userId);
+        if(!counted) {
+            return new CafeTagVoteResultResponse(false, getCurrentMoodTag(cafeId));
+        }
+
+        cafeTagVoteRepository.save(CafeTagVote.create(cafeId, tagId, userId));
+
+        increaseAggregateWithLock(cafeId, tagId);
+        syncTop5CafeTags(cafeId);
+        return new CafeTagVoteResultResponse(true, getCurrentMoodTag(cafeId));
     }
 
 
@@ -128,5 +148,26 @@ public class CafeMoodTagService {
         cafeTagRepository.deleteByCafeIdAndTagIdNotIn(cafeId, tagIdList);
     }
 
+    @Transactional(readOnly = true)
+    public List<MoodTagResponse> getCurrentMoodTag(Long cafeId) {
+        List<CafeTag> cafeTags = cafeTagRepository.findByCafeIdOrderByScoreDesc(cafeId);
+
+        List<Long> tagIds = cafeTags.stream().map(CafeTag::getTagId).toList();
+
+        Map<Long, Tag> tagMap = tagRepository.findAllById(tagIds).stream()
+                .collect(Collectors.toMap(Tag::getId, tag -> tag));
+
+        return cafeTags.stream()
+                .map(cafeTag -> {
+                    Tag tag = tagMap.get(cafeTag.getTagId());
+
+                    return new MoodTagResponse(
+                            cafeTag.getTagId(),
+                            tag != null ? tag.getName() : null,
+                            cafeTag.getScore()
+                    );
+                })
+                .toList();
+    }
 
 }

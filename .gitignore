@@ -1,6 +1,7 @@
 HELP.md
 .gradle
 build/
+.idea/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -17,11 +18,16 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+# application config
+application-local.yml
+application-dev.yml
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+*.log
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/

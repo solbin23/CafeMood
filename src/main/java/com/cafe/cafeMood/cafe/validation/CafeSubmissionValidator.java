@@ -1,6 +1,6 @@
 package com.cafe.cafeMood.cafe.validation;
 
-import com.cafe.cafeMood.cafe.dto.request.CafeSubmissionCreateRequest;
+import com.cafe.cafeMood.cafe.dto.request.cafe.CafeSubmissionCreateRequest;
 import com.cafe.cafeMood.common.validation.ValidatorSupport;
 import org.springframework.stereotype.Component;
 

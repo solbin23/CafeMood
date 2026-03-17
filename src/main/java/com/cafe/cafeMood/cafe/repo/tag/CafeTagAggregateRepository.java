@@ -1,10 +1,9 @@
 package com.cafe.cafeMood.cafe.repo.tag;
 
-import com.cafe.cafeMood.cafe.domain.tag.CafeTagAggregate;
+import com.cafe.cafeMood.tag.CafeTagAggregate;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
