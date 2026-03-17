@@ -1,8 +1,10 @@
 package com.cafe.cafeMood.cafe.service;
 
+import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
+import com.cafe.cafeMood.aggregate.repo.CafeTagAggregateRepository;
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.domain.cafe.CafeStatus;
-import com.cafe.cafeMood.cafe.domain.tag.*;
+
 import com.cafe.cafeMood.cafe.dto.response.cafe.CafeTagVoteResultResponse;
 import com.cafe.cafeMood.cafe.dto.response.MoodTagResponse;
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
@@ -106,14 +108,14 @@ public class CafeMoodTagService {
         Optional<CafeTagAggregate> lockAggregate = tagAggregateRepository.findByCafeIdAndTagIdForUpdate(cafeId, tagId);
         if(lockAggregate.isPresent()) {
             CafeTagAggregate aggregate = lockAggregate.get();
-            aggregate.increase(1,1);
+            aggregate.increase(1);
             return;
         }
         try{
             CafeTagAggregate newAggregate =
               CafeTagAggregate.create(cafeId, tagId);
 
-            newAggregate.increase(1,1);
+            newAggregate.increase(1);
             tagAggregateRepository.save(newAggregate);
             return;
         } catch (DataIntegrityViolationException e) {
@@ -125,7 +127,7 @@ public class CafeMoodTagService {
                         .orElseThrow(() ->
                                 new IllegalArgumentException("aggregate not found after duplicate key"));
 
-        aggregate.increase(1,1);
+        aggregate.increase(1);
     }
 
 

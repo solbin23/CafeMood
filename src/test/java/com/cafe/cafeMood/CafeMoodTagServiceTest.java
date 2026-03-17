@@ -1,5 +1,7 @@
 package com.cafe.cafeMood;
 
+import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
+import com.cafe.cafeMood.aggregate.repo.CafeTagAggregateRepository;
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.domain.tag.*;
 import com.cafe.cafeMood.cafe.dto.response.cafe.CafeTagVoteResultResponse;

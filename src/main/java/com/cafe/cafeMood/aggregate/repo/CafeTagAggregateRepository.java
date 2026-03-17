@@ -1,6 +1,6 @@
-package com.cafe.cafeMood.cafe.repo.tag;
+package com.cafe.cafeMood.aggregate.repo;
 
-import com.cafe.cafeMood.tag.CafeTagAggregate;
+import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggregate, CafeTagAggregate.Pk> {
+public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggregate, Long> {
 
     Optional<CafeTagAggregate> findByCafeIdAndTagId(Long cafeId, Long tagId);
 
