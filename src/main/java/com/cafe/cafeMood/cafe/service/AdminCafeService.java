@@ -24,40 +24,45 @@ public class AdminCafeService {
     private final CafeRepository cafeRepository;
 
     public List<CafeResponse> getAllCafes(){
-        return cafeRepository.findAllByStatusNot(CafeStatus.DELETED)
-                .stream()
-                .map(CafeResponse::from)
-                .toList();
+        return getCafesByStatusNot(CafeStatus.DELETED);
     }
 
 
-    public List<CafeResponse> getPublishCafe(Long cafeId) {
-        return cafeRepository.findAllByStatus(CafeStatus.PUBLISHED)
-                .stream()
-                .map(CafeResponse::from)
-                .toList();
+    public List<CafeResponse> getPublishCafes() {
+        return getCafesByStatus(CafeStatus.PUBLISHED);
+    }
 
+    public List<CafeResponse> getHiddenCafes() {
+        return getCafesByStatus(CafeStatus.HIDDEN);
+    }
+
+    public List<CafeResponse> getSuspendedCafes() {
+        return getCafesByStatus(CafeStatus.SUSPENDED);
+    }
+
+    public CafeResponse getCafe(Long cafeId){
+        return CafeResponse.from(findActiveCafe(cafeId));
     }
 
     @Transactional
-    public List<CafeResponse> getHiddenCafe() {
-        return cafeRepository.findAllByStatus(CafeStatus.HIDDEN)
-                .stream().map(CafeResponse::from).toList();
+    public CafeResponse publishCafe(Long cafeId) {
+        return changeCafeStatus(cafeId, Cafe::publish);
+    }
+
+    @Transactional
+    public CafeResponse HideCafe(Long cafeId) {
+        return changeCafeStatus(cafeId,Cafe::hide);
     }
 
     @Transactional
     public CafeResponse suspendCafe(Long cafeId) {
-        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
-        cafe.suspend();
-        return CafeResponse.from(cafe);
+       return changeCafeStatus(cafeId,Cafe::suspend);
     }
 
     @Transactional
     public void deleteCafe(Long cafeId, String deletedBy) {
-        Cafe cafe = cafeRepository.findByIdAndStatusNot(cafeId, CafeStatus.DELETED)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
-        cafe.delete(deletedBy);
+       Cafe cafe = findActiveCafe(cafeId);
+       cafe.delete(deletedBy);
     }
 
 
