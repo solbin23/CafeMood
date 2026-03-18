@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "cafe_review_tags")
+@Table(name = "cafe_review_tags",
+               uniqueConstraints = @UniqueConstraint(name = "uk_cafe_review_tag",columnNames = {"review_id","tag_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CafeReviewTag extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "review_id", nullable = false)

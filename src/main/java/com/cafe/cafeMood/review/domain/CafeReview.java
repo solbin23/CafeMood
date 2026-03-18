@@ -37,4 +37,13 @@ public class CafeReview extends BaseEntity {
     public static CafeReview of(Long cafeId, Long userId, Integer rating, String content) {
         return new CafeReview(cafeId, userId, rating, content);
     }
+
+    public void update(Integer rating, String content) {
+        this.rating = rating;
+        this.content = content;
+    }
+
+    public void delete(String deletedBy){
+        markDeleted(deletedBy);
+    }
 }

@@ -8,4 +8,8 @@ import java.util.List;
 public interface CafeReviewTagRepository extends JpaRepository<CafeReviewTag, Long> {
 
     List<CafeReviewTag> findAllByCafeId(Long cafeId);
+
+    List<CafeReviewTag> findAllByReviewId(Long reviewId);
+
+    void deleteAllByReviewId(Long reviewId);
 }
