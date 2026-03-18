@@ -8,6 +8,7 @@ import com.cafe.cafeMood.review.domain.CafeReview;
 import com.cafe.cafeMood.review.domain.CafeReviewTag;
 import com.cafe.cafeMood.review.dto.request.CafeReviewCreateRequest;
 import com.cafe.cafeMood.review.dto.request.CafeReviewUpdateRequest;
+import com.cafe.cafeMood.review.dto.response.CafeReviewResponse;
 import com.cafe.cafeMood.review.repo.CafeReviewRepository;
 import com.cafe.cafeMood.review.repo.CafeReviewTagRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class CafeReviewService {
 
 
     @Transactional
-    public Long createReview(CafeReviewCreateRequest request) {
+    public CafeReviewResponse createReview(CafeReviewCreateRequest request) {
         CafeReview review = saveReview(request);
 
         List<Long> tagIds = getDistinctTagIds(request.tagIds());
@@ -38,11 +39,11 @@ public class CafeReviewService {
         createReviewTags(review.getId(), request.cafeId(), tagIds);
         increaseTagAggregates(request.cafeId(), tagIds);
 
-        return review.getId();
+        return CafeReviewResponse.of(review, tagIds);
     }
 
     @Transactional
-    public Long updateReview(Long reviewId, CafeReviewUpdateRequest request) {
+    public CafeReviewResponse updateReview(Long reviewId, CafeReviewUpdateRequest request) {
         CafeReview review = findReview(reviewId);
 
         List<Long> currentTagIds = getCurrentTagIds(reviewId);
@@ -59,7 +60,7 @@ public class CafeReviewService {
 
         decreaseTagAggregates(review.getCafeId(), tagIdsToRemove);
         increaseTagAggregates(review.getCafeId(), tagIdsToAdd);
-        return review.getId();
+        return CafeReviewResponse.of(review, newTagIds);
     }
 
     @Transactional
