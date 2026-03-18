@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.dto.response.cafe;
+package com.cafe.cafeMood.cafe.dto.response;
 
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.menu.dto.response.TopMenuResponse;

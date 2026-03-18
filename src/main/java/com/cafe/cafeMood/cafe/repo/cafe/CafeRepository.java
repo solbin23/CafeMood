@@ -11,7 +11,9 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
 
     Optional<Cafe> findByIdAndStatusNot(Long id, CafeStatus cafeStatus);
 
-    List<Cafe> findAllByOwnerIdAndStatusNot(Long ownerId, CafeStatus cafeStatus);
+    Optional<Cafe> findByOwnerIdAndStatusNot(Long ownerId, CafeStatus cafeStatus);
+
+    boolean existsByOwnerIdAndStatusNot(Long ownerId, CafeStatus cafeStatus);
 
     List<Cafe> findAllByStatusNot(CafeStatus cafeStatus);
 

@@ -22,19 +22,19 @@ public class Cafe extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "owner_id",nullable = false)
+    @Column(name = "owner_id",nullable = false,unique = true)
     private Long ownerId;
 
-    @Column(nullable = false, length = 120)
+    @Column(name = "name",nullable = false, length = 120)
     private String name;
 
-    @Column(name = "address",nullable = false, length = 255)
+    @Column(name = "address",nullable = false)
     private String address;
 
-    @Column(length = 200)
+    @Column(length = 500)
     private String shortDesc;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 30)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -59,7 +59,9 @@ public class Cafe extends BaseEntity {
     }
 
     public void updateInfo(String name, String address, String phone, String shortDesc){
-            validateNotDeleted();
+            if (!this.status.canOwnerEdit()){
+                throw new BusinessException(ErrorCode.INVALID_CAFE_STATE);
+            }
             this.name = name;
             this.address = address;
             this.shortDesc = shortDesc;
@@ -90,6 +92,11 @@ public class Cafe extends BaseEntity {
         this.status = CafeStatus.SUSPENDED;
     }
 
+    public void restoreDraft(){
+        validateNotDeleted();
+        this.status = CafeStatus.DRAFT;
+    }
+
     public void delete(String deletedBy) {
         if (this.status == CafeStatus.DELETED) {
             throw new BusinessException(ErrorCode.CAFE_ALREADY_DELETED);
@@ -98,15 +105,9 @@ public class Cafe extends BaseEntity {
         this.status = CafeStatus.DELETED;
     }
 
-
-    private void validateCanOwnerEdit(){
-        if(!this.status.canOwnerEdit()){
-            throw new BusinessException(ErrorCode.INVALID_CAFE_STATE);
-        }
-    }
     private void validateNotDeleted() {
-        if (this.status == CafeStatus.DELETED) {
-            throw new IllegalArgumentException("삭제된 카페는 처리할 수 없습니다.");
+        if (this.status.isDeleted()) {
+            throw new BusinessException(ErrorCode.CAFE_ALREADY_DELETED);
         }
     }
 }

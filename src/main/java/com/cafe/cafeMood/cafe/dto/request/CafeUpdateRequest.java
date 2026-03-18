@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.cafe.dto.request.cafe;
+package com.cafe.cafeMood.cafe.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

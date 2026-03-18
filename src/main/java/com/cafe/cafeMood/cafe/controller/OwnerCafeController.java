@@ -1,9 +1,9 @@
 package com.cafe.cafeMood.cafe.controller;
 
 
-import com.cafe.cafeMood.cafe.dto.request.cafe.CafeCreateRequest;
-import com.cafe.cafeMood.cafe.dto.response.cafe.CafeResponse;
-import com.cafe.cafeMood.cafe.service.CafeService;
+import com.cafe.cafeMood.cafe.dto.request.CafeCreateRequest;
+import com.cafe.cafeMood.cafe.dto.response.CafeResponse;
+import com.cafe.cafeMood.cafe.service.OwnerCafeService;
 import com.cafe.cafeMood.common.response.ApiResponse;
 import com.cafe.cafeMood.common.response.ResponseCode;
 import jakarta.validation.Valid;
@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/cafe")
 @RequiredArgsConstructor
-public class CafeController {
+public class OwnerCafeController {
 
-    private final CafeService cafeService;
+    private final OwnerCafeService ownerCafeService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CafeResponse>> createCafe(@Valid @RequestBody CafeCreateRequest request) {
-       CafeResponse cafeResponse =  cafeService.createCafe(request);
+    public ResponseEntity<ApiResponse<CafeResponse>> createCafe(Long ownerId,@Valid @RequestBody CafeCreateRequest request) {
+       CafeResponse cafeResponse =  ownerCafeService.createCafe(ownerId,request);
         ResponseCode code = ResponseCode.CREATED;
 
         return ResponseEntity.status(code.status())

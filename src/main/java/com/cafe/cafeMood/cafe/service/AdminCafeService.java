@@ -3,7 +3,7 @@ package com.cafe.cafeMood.cafe.service;
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.cafe.domain.cafe.CafeStatus;
 
-import com.cafe.cafeMood.cafe.dto.response.cafe.CafeResponse;
+import com.cafe.cafeMood.cafe.dto.response.CafeResponse;
 
 import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
 
