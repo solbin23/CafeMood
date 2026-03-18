@@ -15,7 +15,8 @@ public enum ErrorCode {
     MENU_DELETED(HttpStatus.BAD_REQUEST,"MENU-400","이미 삭제된 메뉴입니다."),
     INVALID_MENU_STATE(HttpStatus.BAD_REQUEST,"MENU-400","현재 상태에서는 처리할 수 없습니다."),
 
-    TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"TAG-404","태그를 찾을 수 없습니다.");
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"TAG-404","태그를 찾을 수 없습니다."),
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND,"REVIEW-404","리뷰를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
