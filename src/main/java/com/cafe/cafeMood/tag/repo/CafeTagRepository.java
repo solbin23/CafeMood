@@ -11,4 +11,5 @@ public interface CafeTagRepository extends JpaRepository<Tag, Long> {
     Optional<Tag> findByCafeIdAndTagId(Long cafeId,Long tagId);
     List<Tag> findByCafeIdOrderByScoreDesc(Long cafeId);
     void deleteByCafeIdAndTagIdNotIn(Long cafeId, List<Long> tagIds);
+    Optional<Tag> findByName(String name);
 }
