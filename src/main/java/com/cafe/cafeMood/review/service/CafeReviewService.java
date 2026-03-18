@@ -7,6 +7,7 @@ import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.review.domain.CafeReview;
 import com.cafe.cafeMood.review.domain.CafeReviewTag;
 import com.cafe.cafeMood.review.dto.request.CafeReviewCreateRequest;
+import com.cafe.cafeMood.review.dto.request.CafeReviewUpdateRequest;
 import com.cafe.cafeMood.review.repo.CafeReviewRepository;
 import com.cafe.cafeMood.review.repo.CafeReviewTagRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,52 @@ public class CafeReviewService {
     private final CafeReviewRepository reviewRepository;
     private final CafeReviewTagRepository reviewTagRepository;
     private final CafeTagAggregateService tagAggregateService;
+    private final CafeReviewTagRepository cafeReviewTagRepository;
 
 
     @Transactional
     public Long createReview(CafeReviewCreateRequest request) {
-        CafeReview review =
+        CafeReview review = saveReview(request);
+
+        List<Long> tagIds = getDistinctTagIds(request.tagIds());
+
+        createReviewTags(review.getId(), request.cafeId(), tagIds);
+        increaseTagAggregates(request.cafeId(), tagIds);
+
+        return review.getId();
+    }
+
+    @Transactional
+    public Long updateReview(Long reviewId, CafeReviewUpdateRequest request) {
+        CafeReview review = findReview(reviewId);
+
+        List<Long> currentTagIds = getCurrentTagIds(reviewId);
+        List<Long> newTagIds = getDistinctTagIds(request.tagIds());
+
+        List<Long> tagIdsToAdd = getTagIdsToAdd(currentTagIds, newTagIds);
+        List<Long> tagIdsToRemove = getTagIdsToRemove(currentTagIds, newTagIds);
+
+        review.update(request.rating(), request.content());
+
+        removeReviewTags(reviewId, tagIdsToRemove);
+        createReviewTags(reviewId, review.getCafeId(), tagIdsToAdd);
+
+
+        decreaseTagAggregates(review.getCafeId(), tagIdsToRemove);
+        increaseTagAggregates(review.getCafeId(), tagIdsToAdd);
+        return review.getId();
+    }
+
+    @Transactional
+    public void deleteReview(Long reviewId, String deletedBy) {
+        CafeReview review = findReview(reviewId);
+
+        List<Long> currentTagIds = getCurrentTagIds(reviewId);
+
+        decreaseTagAggregates(review.getCafeId(), currentTagIds);
+        cafeReviewTagRepository.deleteAllByReviewId(reviewId);
+
+        review.delete(deletedBy);
     }
 
     private CafeReview saveReview(CafeReviewCreateRequest request) {
