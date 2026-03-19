@@ -49,17 +49,25 @@ public class User extends BaseEntity {
         this.role = role;
         this.active = true;
     }
+    private User(String loginId, String password){
+        this.loginId = loginId;
+        this.password = password;
+    }
 
-    public static User createUser(String loginId, String password, String name, String email, String phone) {
+    public static User user(String loginId, String password, String name, String email, String phone) {
         return new User(loginId, password, name, email, phone, UserRole.USER);
     }
 
-    public static User createOwner(String loginId, String password, String name, String email, String phone) {
+    public static User owner(String loginId, String password, String name, String email, String phone) {
         return new User(loginId, password, name, email, phone, UserRole.OWNER);
     }
 
-    public static User createAdmin(String loginId, String password, String name, String email, String phone) {
+    public static User admin(String loginId, String password, String name, String email, String phone) {
         return new User(loginId, password, name, email, phone, UserRole.ADMIN);
+    }
+
+    public static User login(String loginId, String password){
+        return new User(loginId, password);
     }
 
     public boolean isUser() {
