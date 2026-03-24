@@ -4,7 +4,7 @@ package com.cafe.cafeMood.user.service;
 import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.user.domain.User;
-import com.cafe.cafeMood.user.dto.request.LoginRequest;
+import com.cafe.cafeMood.common.auth.LoginRequest;
 import com.cafe.cafeMood.user.dto.request.SignUpRequest;
 import com.cafe.cafeMood.user.dto.response.LoginResponse;
 import com.cafe.cafeMood.user.dto.response.UserResponse;
@@ -24,27 +24,25 @@ public class UserService {
 
     @Transactional
     public UserResponse signUpUser(SignUpRequest request) {
-        validateDuplicated(request.loginId(), request.email());
+        validateDuplicated(request.email());
 
         String encodedPassword = passwordEncoder.encode(request.password());
         User user = User.user(
-                request.loginId(),
+                request.email(),
                 encodedPassword,
                 request.name(),
-                request.email(),
                 request.phone()
         );
         return UserResponse.from(userRepository.save(user));
     }
     @Transactional
     public UserResponse signUpOwner(SignUpRequest request) {
-        validateDuplicated(request.loginId(), request.email());
+        validateDuplicated(request.email());
         String encodedPassword = passwordEncoder.encode(request.password());
         User owner = User.owner(
-                request.loginId(),
+                request.email(),
                 encodedPassword,
                 request.name(),
-                request.email(),
                 request.phone()
         );
         return UserResponse.from(userRepository.save(owner));
@@ -52,7 +50,7 @@ public class UserService {
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
-        User login = userRepository.findByLoginId(request.loginId())
+        User login = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.password(), login.getPassword())){
@@ -61,14 +59,11 @@ public class UserService {
 
         return LoginResponse.of(
                 login.getId(),
-                login.getLoginId(),
+                login.getEmail(),
                 login.getRole()
         );
     }
-    private void validateDuplicated(String loginId, String email){
-        if (userRepository.existsByLoginId(loginId)){
-            throw new BusinessException(ErrorCode.DUPLICATED_LOGIN_ID);
-        }
+    private void validateDuplicated(String email){
         if (userRepository.existsByEmail(email)){
             throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
         }

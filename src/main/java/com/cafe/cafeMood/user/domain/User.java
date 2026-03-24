@@ -18,8 +18,8 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login_id", nullable = false, length = 50)
-    private String loginId;
+    @Column(name = "email",nullable = false, length = 100)
+    private String email;
 
     @Column(name = "password",nullable = false)
     private String password;
@@ -27,8 +27,6 @@ public class User extends BaseEntity {
     @Column(name = "name",nullable = false, length = 100)
     private String name;
 
-    @Column(name = "email",nullable = false, length = 100)
-    private String email;
 
     @Column(name = "phone", length = 30)
     private String phone;
@@ -40,45 +38,33 @@ public class User extends BaseEntity {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    private User(String loginId, String password, String name, String email, String phone, UserRole role) {
-        this.loginId = loginId;
+    private User(String email, String password, String name, String phone, UserRole role) {
+        this.email = email;
         this.password = password;
         this.name = name;
-        this.email = email;
         this.phone = phone;
         this.role = role;
         this.active = true;
     }
-    private User(String loginId, String password){
-        this.loginId = loginId;
+    private User(String email, String password){
+        this.email = email;
         this.password = password;
     }
 
-    public static User user(String loginId, String password, String name, String email, String phone) {
-        return new User(loginId, password, name, email, phone, UserRole.USER);
+    public static User user(String email, String password, String name, String phone) {
+        return new User(email, password, name, phone, UserRole.USER);
     }
 
-    public static User owner(String loginId, String password, String name, String email, String phone) {
-        return new User(loginId, password, name, email, phone, UserRole.OWNER);
+    public static User owner(String email, String password, String name, String phone) {
+        return new User(email, password, name, phone, UserRole.OWNER);
     }
 
-    public static User admin(String loginId, String password, String name, String email, String phone) {
-        return new User(loginId, password, name, email, phone, UserRole.ADMIN);
+    public static User admin(String email, String password, String name,  String phone) {
+        return new User(email, password, name,  phone, UserRole.ADMIN);
     }
 
     public static User login(String loginId, String password){
         return new User(loginId, password);
-    }
-
-    public boolean isUser() {
-        return this.role == UserRole.USER;
-    }
-    public boolean isOwner(){
-        return this.role == UserRole.OWNER;
-    }
-
-    public boolean isAdmin(){
-        return this.role == UserRole.ADMIN;
     }
 
     public void deactivate() {

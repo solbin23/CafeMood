@@ -3,7 +3,7 @@ package com.cafe.cafeMood.user.controller;
 
 import com.cafe.cafeMood.common.response.ApiResponse;
 import com.cafe.cafeMood.common.response.ResponseCode;
-import com.cafe.cafeMood.user.dto.request.LoginRequest;
+import com.cafe.cafeMood.common.auth.LoginRequest;
 import com.cafe.cafeMood.user.dto.response.LoginResponse;
 import com.cafe.cafeMood.user.service.UserService;
 import jakarta.validation.Valid;
