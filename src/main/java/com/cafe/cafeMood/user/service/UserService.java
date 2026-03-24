@@ -1,10 +1,11 @@
 package com.cafe.cafeMood.user.service;
 
 
+import com.cafe.cafeMood.common.auth.dto.LoginUser;
 import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.user.domain.User;
-import com.cafe.cafeMood.common.auth.LoginRequest;
+import com.cafe.cafeMood.common.auth.dto.LoginRequest;
 import com.cafe.cafeMood.user.dto.request.SignUpRequest;
 import com.cafe.cafeMood.user.dto.response.LoginResponse;
 import com.cafe.cafeMood.user.dto.response.UserResponse;
@@ -22,50 +23,26 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public UserResponse signUpUser(SignUpRequest request) {
-        validateDuplicated(request.email());
 
-        String encodedPassword = passwordEncoder.encode(request.password());
-        User user = User.user(
-                request.email(),
-                encodedPassword,
-                request.name(),
-                request.phone()
-        );
-        return UserResponse.from(userRepository.save(user));
-    }
-    @Transactional
-    public UserResponse signUpOwner(SignUpRequest request) {
-        validateDuplicated(request.email());
-        String encodedPassword = passwordEncoder.encode(request.password());
-        User owner = User.owner(
-                request.email(),
-                encodedPassword,
-                request.name(),
-                request.phone()
-        );
-        return UserResponse.from(userRepository.save(owner));
-    }
-
-    @Transactional
-    public LoginResponse login(LoginRequest request) {
-        User login = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(request.password(), login.getPassword())){
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+    public void signUp(SignUpRequest signUpRequest) {
+        if (userRepository.existsByEmail(signUpRequest.email())) {
+            throw  new BusinessException(ErrorCode.DUPLICATED_EMAIL);
         }
 
-        return LoginResponse.of(
-                login.getId(),
-                login.getEmail(),
-                login.getRole()
-        );
+        String encodedPassword = passwordEncoder.encode(signUpRequest.password());
+
+        User user = User.create(signUpRequest.email(), encodedPassword,signUpRequest.name(),signUpRequest.phone());
+
+
+        userRepository.save(user);
     }
-    private void validateDuplicated(String email){
-        if (userRepository.existsByEmail(email)){
-            throw new BusinessException(ErrorCode.DUPLICATED_EMAIL);
-        }
+
+    @Transactional
+    public UserResponse getMyInfo(LoginUser loginUser) {
+
+        User user = userRepository.findById(loginUser.userId()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserResponse(user.getId(),user.getName(),user.getEmail(),user.getPhone(),user.getRole());
     }
+
 }

@@ -1,5 +1,6 @@
-package com.cafe.cafeMood.common.auth;
+package com.cafe.cafeMood.common.auth.jwt;
 
+import com.cafe.cafeMood.common.auth.dto.LoginUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.cafe.cafeMood.common.auth;
+package com.cafe.cafeMood.common.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,18 +1,15 @@
-package com.cafe.cafeMood.common.auth;
+package com.cafe.cafeMood.common.auth.jwt;
 
 
-import com.auth0.jwt.interfaces.Claim;
+import com.cafe.cafeMood.common.auth.dto.LoginUser;
 import com.cafe.cafeMood.user.domain.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Date;
 
 @Component

@@ -5,8 +5,8 @@ import com.cafe.cafeMood.user.domain.UserRole;
 
 public record UserResponse(
         Long id,
-        String name,
         String email,
+        String name,
         String phone,
         UserRole role
 ) {

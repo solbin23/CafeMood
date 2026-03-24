@@ -35,39 +35,23 @@ public class User extends BaseEntity {
     @Column(name = "role", nullable = false, length = 20)
     private UserRole role;
 
-    @Column(name = "active", nullable = false)
-    private boolean active;
-
-    private User(String email, String password, String name, String phone, UserRole role) {
+    public User(String email, String password, String name, String phone, UserRole role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.role = role;
-        this.active = true;
+
     }
-    private User(String email, String password){
+    private User(String email, String password,UserRole role){
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public static User user(String email, String password, String name, String phone) {
+    public static User create(String email, String password, String name, String phone) {
         return new User(email, password, name, phone, UserRole.USER);
     }
 
-    public static User owner(String email, String password, String name, String phone) {
-        return new User(email, password, name, phone, UserRole.OWNER);
-    }
 
-    public static User admin(String email, String password, String name,  String phone) {
-        return new User(email, password, name,  phone, UserRole.ADMIN);
-    }
-
-    public static User login(String loginId, String password){
-        return new User(loginId, password);
-    }
-
-    public void deactivate() {
-        this.active = false;
-    }
 }

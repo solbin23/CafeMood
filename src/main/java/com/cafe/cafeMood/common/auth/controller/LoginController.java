@@ -1,9 +1,11 @@
-package com.cafe.cafeMood.user.controller;
+package com.cafe.cafeMood.common.auth.controller;
 
 
+import com.cafe.cafeMood.common.auth.dto.LoginRequest;
+import com.cafe.cafeMood.common.auth.dto.UserInfoResponse;
+import com.cafe.cafeMood.common.auth.service.AuthService;
 import com.cafe.cafeMood.common.response.ApiResponse;
 import com.cafe.cafeMood.common.response.ResponseCode;
-import com.cafe.cafeMood.common.auth.LoginRequest;
 import com.cafe.cafeMood.user.dto.response.LoginResponse;
 import com.cafe.cafeMood.user.service.UserService;
 import jakarta.validation.Valid;
@@ -19,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/cafe")
 public class LoginController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = userService.login(request);
+    public ResponseEntity<ApiResponse<UserInfoResponse>> login(@Valid @RequestBody LoginRequest request) {
+        UserInfoResponse response = authService.login(request);
 
         return ResponseEntity.ok(ApiResponse.success(ResponseCode.SUCCESS, response));
     }
