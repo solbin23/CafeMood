@@ -5,7 +5,6 @@ import com.cafe.cafeMood.user.domain.UserRole;
 
 public record UserResponse(
         Long id,
-        String loginId,
         String name,
         String email,
         String phone,
@@ -13,10 +12,9 @@ public record UserResponse(
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(user.getId(),
-        user.getLoginId(),
-        user.getName(),
-        user.getEmail(),
-        user.getPhone(),
-        user.getRole());
+                user.getEmail(),
+                user.getName(),
+                user.getPhone(),
+                user.getRole());
     }
 }
