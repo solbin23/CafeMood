@@ -28,7 +28,7 @@ public class CafeTagAggregate extends BaseEntity {
     private Long tagId;
 
     @Column(name = "total_count", nullable = false)
-    private Long totalCount;
+    private Long count;
 
     @Column(name = "score", nullable = false)
     private double score;
@@ -37,7 +37,7 @@ public class CafeTagAggregate extends BaseEntity {
     private CafeTagAggregate(Long cafeId, Long tagId) {
         this.cafeId = cafeId;
         this.tagId = tagId;
-        this.totalCount = 0L;
+        this.count = 0L;
         this.score = 0.0;
 
     }
@@ -47,15 +47,15 @@ public class CafeTagAggregate extends BaseEntity {
     }
 
     public void increase() {
-        this.totalCount += 1;
-        this.score = this.totalCount;
+        this.count += 1;
+        this.score = this.count;
     }
 
     public void decrease() {
-        if (this.totalCount > 0) {
-            this.totalCount -= 1;
+        if (this.count > 0) {
+            this.count -= 1;
         }
-        this.score = this.totalCount;
+        this.score = this.count;
     }
 }
 

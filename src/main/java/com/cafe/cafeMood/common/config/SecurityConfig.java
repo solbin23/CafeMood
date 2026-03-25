@@ -23,7 +23,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
-        String secret = "cafeMood";
+        String secret = "cafeMood-secret-cafeMood-secret-cafeMood-secret-cafeMood-secret";
         long accessTokenValiditySeconds = 1000L * 60 * 30;
 
         return new JwtTokenProvider(secret, accessTokenValiditySeconds);

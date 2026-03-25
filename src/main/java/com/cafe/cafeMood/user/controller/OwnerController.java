@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/cafe/owners")
 public class OwnerController {
 
-    private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserResponse>> signUpOwner(@Valid @RequestBody SignUpRequest request) {
-        UserResponse owner = userService.signUpOwner(request);
-
-        return ResponseEntity.status(ResponseCode.CREATED.status())
-                .body(ApiResponse.success(ResponseCode.CREATED, owner));
-    }
+//    private final UserService userService;
+//
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<UserResponse>> signUpOwner(@Valid @RequestBody SignUpRequest request) {
+//        UserResponse owner = userService.signUpOwner(request);
+//
+//        return ResponseEntity.status(ResponseCode.CREATED.status())
+//                .body(ApiResponse.success(ResponseCode.CREATED, owner));
+//    }
 }
