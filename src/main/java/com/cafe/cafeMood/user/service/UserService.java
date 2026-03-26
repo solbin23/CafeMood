@@ -24,7 +24,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public void signUp(SignUpRequest signUpRequest) {
+    public User signUp(SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.email())) {
             throw  new BusinessException(ErrorCode.DUPLICATED_EMAIL);
         }
@@ -33,11 +33,10 @@ public class UserService {
 
         User user = User.create(signUpRequest.email(), encodedPassword,signUpRequest.name(),signUpRequest.phone());
 
-
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserResponse getMyInfo(LoginUser loginUser) {
 
         User user = userRepository.findById(loginUser.userId()).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));

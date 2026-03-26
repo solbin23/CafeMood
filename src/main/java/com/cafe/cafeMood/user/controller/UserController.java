@@ -23,17 +23,19 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserResponse>> signUp(@Valid @RequestBody SignUpRequest request){
+    @PostMapping("/signup")
+    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request){
                userService.signUp(request);
 
                return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserResponse> getMyInfo(HttpServletRequest request){
+    public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(HttpServletRequest request){
         LoginUser user = AuthUtil.getLoginUser(request);
-        return ResponseEntity.ok(userService.getMyInfo(user));
+        UserResponse response = userService.getMyInfo(user);
+        ApiResponse<UserResponse> myInfo = ApiResponse.success(ResponseCode.SUCCESS,response);
+        return ResponseEntity.ok(myInfo);
     }
 
     @GetMapping("/check")
