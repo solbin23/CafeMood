@@ -16,17 +16,17 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final SecretKey secretKey;
-    private final long accessTokenValidity;
+    private final long accessTokenValidityMillis;
 
-    public JwtTokenProvider(String secret, long accessTokenValiditySeconds) {
+    public JwtTokenProvider(String secret, long accessTokenValidityMillis) {
 
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenValidity = accessTokenValiditySeconds;
+        this.accessTokenValidityMillis = accessTokenValidityMillis;
     }
 
     public String createAccessToken(Long userId, String email,UserRole role) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + accessTokenValidity);
+        Date expiryDate = new Date(now.getTime() + accessTokenValidityMillis);
 
         return Jwts.builder().subject(String.valueOf(userId))
                 .claim("email",email)
@@ -38,10 +38,7 @@ public class JwtTokenProvider {
     }
 
     public LoginUser getLoginUser(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token).getPayload();
+        Claims claims = parseClaims(token);
 
         Long userId = Long.valueOf(claims.getSubject());
         String email = claims.get("email", String.class);
