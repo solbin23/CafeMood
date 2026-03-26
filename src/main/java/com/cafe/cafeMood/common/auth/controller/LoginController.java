@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cafe")
+@RequestMapping("/cafe/mood")
 public class LoginController {
 
     private final AuthService authService;
