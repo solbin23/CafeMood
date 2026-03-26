@@ -1,5 +1,6 @@
 package com.cafe.cafeMood.tag.domain;
 
+import com.cafe.cafeMood.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "tags")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag {
+public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,22 +19,22 @@ public class Tag {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 60)
-    private String slug;
+    @Column(nullable = false, length = 60)
+    private TagCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TagStatus status;
 
+    @Column(nullable = false)
+    private int sortOrder;
 
-    private Tag(String name, String slug) {
+
+    public Tag(String name, TagCategory category, TagStatus status, int sortOrder) {
         this.name = name;
-        this.slug = slug;
+        this.category = category;
         this.status = TagStatus.ACTIVE;
-    }
-
-    public static Tag create(String name, String slug) {
-        return new Tag(name, slug);
+        this.sortOrder = sortOrder;
     }
 
     public void hide() {

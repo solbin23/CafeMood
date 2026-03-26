@@ -1,6 +1,7 @@
 package com.cafe.cafeMood.tag.repo;
 
 import com.cafe.cafeMood.tag.domain.Tag;
+import com.cafe.cafeMood.tag.domain.TagCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,5 +12,7 @@ public interface CafeTagRepository extends JpaRepository<Tag, Long> {
 //    Optional<Tag> findByCafeIdAndTagId(Long cafeId,Long tagId);
 //    List<Tag> findByCafeIdOrderByScoreDesc(Long cafeId);
 //    void deleteByCafeIdAndTagIdNotIn(Long cafeId, List<Long> tagIds);
+    List<Tag> findByActiveTrueOrderBySortOrderAsc();
+    List<Tag> findByCategoryAndActiveTrueOrderBySortOrderAsc(TagCategory category);
     Optional<Tag> findByName(String name);
 }
