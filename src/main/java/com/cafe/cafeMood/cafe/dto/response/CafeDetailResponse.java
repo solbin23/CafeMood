@@ -2,6 +2,8 @@ package com.cafe.cafeMood.cafe.dto.response;
 
 import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.menu.dto.response.MenuResponse;
+import com.cafe.cafeMood.review.dto.response.CafeReviewResponse;
+import com.cafe.cafeMood.tag.dto.TopTagResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -12,23 +14,9 @@ public record CafeDetailResponse(
         String address,
         String phone,
         String description,
-        List<String> moodTags,
-        Map<String, List<MenuResponse>> menus
-) {
+        Map<String, List<MenuResponse>> menus,
+        List<TopTagResponse> moodTags,
+        List<CafeReviewResponse> reviews
+        ) {
 
-    public static CafeDetailResponse of(Cafe cafe,
-                                        List<String> moodTags,
-                                        Map<String, List<MenuResponse>> menus
-
-    ) {
-        return new CafeDetailResponse(
-                cafe.getId(),
-                cafe.getName(),
-                cafe.getAddress(),
-                cafe.getPhone(),
-                cafe.getShortDesc(),
-                moodTags,
-                menus
-        );
-    }
 }

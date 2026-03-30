@@ -44,7 +44,7 @@ public class Cafe extends BaseEntity {
     private Cafe(Long ownerId,String name, String address,String shortDesc, String phone) {
 
         if(name == null || name.trim().isEmpty()){
-            throw new IllegalArgumentException("Cafe name is null or empty");
+            throw new IllegalArgumentException("카페이름이 비어있습니다.");
         }
         this.ownerId = ownerId;
         this.name = name;

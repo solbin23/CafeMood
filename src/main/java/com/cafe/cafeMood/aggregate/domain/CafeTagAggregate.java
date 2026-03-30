@@ -13,7 +13,9 @@ import java.util.Objects;
 @Entity
 @Getter
 @Table(name = "cafe_tag_aggregate",
-uniqueConstraints = @UniqueConstraint(name = "uk_cafe_tag_aggregate",columnNames = {"cafe_id","tag_id"}))
+uniqueConstraints = @UniqueConstraint(name = "uk_cafe_tag_aggregate_cafe_tag",columnNames = {"cafe_id","tag_id"}),indexes = {
+        @Index(name = "idx_cafe_tag_aggregate_tag_id", columnList = "tag_id"),@Index(name = "ind_cafe_tag_score_cafe_id", columnList = "cafe_id")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CafeTagAggregate extends BaseEntity {
 
@@ -27,36 +29,17 @@ public class CafeTagAggregate extends BaseEntity {
     @Column(name = "tag_id", nullable = false)
     private Long tagId;
 
-    @Column(name = "total_count", nullable = false)
-    private Long count;
-
     @Column(name = "score", nullable = false)
     private double score;
 
 
-    private CafeTagAggregate(Long cafeId, Long tagId) {
+    public CafeTagAggregate(Long cafeId, Long tagId, double score) {
         this.cafeId = cafeId;
         this.tagId = tagId;
-        this.count = 0L;
-        this.score = 0.0;
+        this.score = score;
 
     }
 
-    public static CafeTagAggregate create(Long cafeId, Long tagId) {
-        return new CafeTagAggregate(cafeId, tagId);
-    }
-
-    public void increase() {
-        this.count += 1;
-        this.score = this.count;
-    }
-
-    public void decrease() {
-        if (this.count > 0) {
-            this.count -= 1;
-        }
-        this.score = this.count;
-    }
 }
 
 

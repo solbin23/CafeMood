@@ -67,7 +67,7 @@ public class AdminCafeService {
 
 
     private List<CafeResponse> getCafesByStatus(CafeStatus status) {
-        return cafeRepository.findAllByStatus(status)
+        return cafeRepository.findByStatus(status)
                 .stream()
                 .map(CafeResponse::from)
                 .toList();

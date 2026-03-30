@@ -2,22 +2,32 @@ package com.cafe.cafeMood.review.service;
 
 import com.cafe.cafeMood.aggregate.repo.CafeTagAggregateRepository;
 import com.cafe.cafeMood.aggregate.service.CafeTagAggregateService;
+import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
+import com.cafe.cafeMood.cafe.domain.cafe.CafeStatus;
+import com.cafe.cafeMood.cafe.repo.cafe.CafeRepository;
+import com.cafe.cafeMood.common.auth.dto.LoginUser;
 import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.review.domain.CafeReview;
 import com.cafe.cafeMood.review.domain.CafeReviewTag;
+import com.cafe.cafeMood.review.domain.CafeReviewTagSelection;
 import com.cafe.cafeMood.review.dto.request.CafeReviewCreateRequest;
 import com.cafe.cafeMood.review.dto.request.CafeReviewUpdateRequest;
 import com.cafe.cafeMood.review.dto.response.CafeReviewResponse;
 import com.cafe.cafeMood.review.repo.CafeReviewRepository;
 import com.cafe.cafeMood.review.repo.CafeReviewTagRepository;
+import com.cafe.cafeMood.review.repo.CafeReviewTagSelectionRepository;
+import com.cafe.cafeMood.tag.domain.Tag;
+import com.cafe.cafeMood.tag.repo.CafeTagRepository;
+import com.cafe.cafeMood.user.domain.User;
+import com.cafe.cafeMood.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,119 +35,143 @@ import java.util.Set;
 public class CafeReviewService {
 
     private final CafeReviewRepository reviewRepository;
+    private final CafeReviewTagSelectionRepository tagSelectionRepository;
     private final CafeReviewTagRepository reviewTagRepository;
+    private final CafeTagRepository tagRepository;
     private final CafeTagAggregateService tagAggregateService;
-    private final CafeReviewTagRepository cafeReviewTagRepository;
+    private final UserRepository userRepository;
+    private final CafeRepository cafeRepository;
+    private final CafeTagAggregateService cafeTagAggregateService;
 
+    public Long createReview(LoginUser loginUser, Long cafeId, CafeReviewCreateRequest request) {
+        validateDuplicateTagIds(request.tagIds());
 
-    @Transactional
-    public CafeReviewResponse createReview(CafeReviewCreateRequest request) {
-        CafeReview review = saveReview(request);
+        User user = getUser(loginUser.userId());
+        Cafe cafe = getPublishedCafe(cafeId);
 
-        List<Long> tagIds = getDistinctTagIds(request.tagIds());
+        if (reviewRepository.existsByCafeIdAndUserId(cafeId, user.getId())) {
+            throw new BusinessException(ErrorCode.ALREADY_REVIEWED_CAFE);
+        }
 
-        createReviewTags(review.getId(), request.cafeId(), tagIds);
-        increaseTagAggregates(request.cafeId(), tagIds);
+        List<Tag> tags = validateAndGetTags(request.tagIds());
 
-        return CafeReviewResponse.of(review, tagIds);
-    }
-
-    @Transactional
-    public CafeReviewResponse updateReview(Long reviewId, CafeReviewUpdateRequest request) {
-        CafeReview review = findReview(reviewId);
-
-        List<Long> currentTagIds = getCurrentTagIds(reviewId);
-        List<Long> newTagIds = getDistinctTagIds(request.tagIds());
-
-        List<Long> tagIdsToAdd = getTagIdsToAdd(currentTagIds, newTagIds);
-        List<Long> tagIdsToRemove = getTagIdsToRemove(currentTagIds, newTagIds);
-
-        review.update(request.rating(), request.content());
-
-        removeReviewTags(reviewId, tagIdsToRemove);
-        createReviewTags(reviewId, review.getCafeId(), tagIdsToAdd);
-
-
-        decreaseTagAggregates(review.getCafeId(), tagIdsToRemove);
-        increaseTagAggregates(review.getCafeId(), tagIdsToAdd);
-        return CafeReviewResponse.of(review, newTagIds);
-    }
-
-    @Transactional
-    public void deleteReview(Long reviewId, String deletedBy) {
-        CafeReview review = findReview(reviewId);
-
-        List<Long> currentTagIds = getCurrentTagIds(reviewId);
-
-        decreaseTagAggregates(review.getCafeId(), currentTagIds);
-        cafeReviewTagRepository.deleteAllByReviewId(reviewId);
-
-        review.delete(deletedBy);
-    }
-
-    private CafeReview saveReview(CafeReviewCreateRequest request) {
-        return reviewRepository.save(
-                CafeReview.of(request.cafeId(),
-                        request.userId(),
-                        request.rating(),
-                        request.content())
+        CafeReview cafeReview = reviewRepository.save(
+                CafeReview.builder()
+                        .cafe(cafe)
+                        .user(user)
+                        .content(request.content())
+                        .build()
         );
+
+        for (Tag tag : tags) {
+            tagSelectionRepository.save(CafeReviewTagSelection.of(cafeReview.getId(), tag.getId()));
+            tagAggregateService.increase(cafe.getId(), tag.getId());
+        }
+
+        return cafeReview.getId();
     }
 
-    private CafeReview findReview(Long reviewId) {
-        return reviewRepository.findByIdAndDeletedAtIsNull(reviewId)
+
+
+    private void updateReview(LoginUser loginUser, Long reviewId,CafeReviewUpdateRequest request) {
+        validateDuplicateTagIds(request.tagIds());
+
+        CafeReview cafeReview = reviewRepository.findByIdAndUserId(reviewId,loginUser.userId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_REVIEW));
+
+        if (cafeReview.getCafe().getStatus() != CafeStatus.PUBLISHED) {
+            throw new BusinessException(ErrorCode.INVALID_CAFE_STATE);
+        }
+        List<Tag> newTags = validateAndGetTags(request.tagIds());
+        List<CafeReviewTagSelection> selections = tagSelectionRepository.findByReviewId(reviewId);
+
+        Set<Long> oldTagIds = selections.stream()
+                .map(CafeReviewTagSelection::getTagId)
+                .collect(Collectors.toSet());
+
+        Set<Long> newTagIds = newTags.stream()
+                .map(Tag::getId)
+                .collect(Collectors.toSet());
+
+        Set<Long> removedTagIds = new HashSet<>();
+        removedTagIds.addAll(oldTagIds);
+
+        Set<Long> addedTagIds = new HashSet<>();
+        addedTagIds.addAll(newTagIds);
+
+        Long cafeId = cafeReview.getCafe().getId();
+
+        for (Long removedTagId : removedTagIds) {
+            tagAggregateService.decrease(cafeId,removedTagId);
+        }
+
+        for (Long addedTagId : addedTagIds) {
+            cafeTagAggregateService.increase(cafeId,addedTagId);
+
+        }
+
+        tagSelectionRepository.deleteByReviewId(reviewId);
+
+        for (Tag tag : newTags) {
+            tagSelectionRepository.save(CafeReviewTagSelection.of(reviewId, tag.getId()));
+        }
+
+        cafeReview.update(request.content());
+
     }
 
-    private void createReviewTags(Long reviewId, Long cafeId, List<Long> tagIds){
+
+    public void deleteReview(LoginUser loginUser, Long reviewId) {
+        CafeReview cafeReview = reviewRepository.findByIdAndUserId(reviewId, loginUser.userId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_REVIEW));
+
+        List<CafeReviewTagSelection> selections = tagSelectionRepository.findByReviewId(reviewId);
+
+        for (CafeReviewTagSelection selection : selections) {
+            tagAggregateService.decrease(cafeReview.getCafe().getId(), selection.getTagId());
+        }
+        tagSelectionRepository.deleteByReviewId(reviewId);
+        reviewRepository.delete(cafeReview);
+    }
+
+    private Cafe getPublishedCafe(Long cafeId) {
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
+
+        if (cafe.getStatus() != CafeStatus.PUBLISHED) {
+            throw new BusinessException(ErrorCode.INVALID_CAFE_STATE);
+        }
+        return cafe;
+    }
+
+    private User getUser(Long userId){
+        return userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private List<Tag> validateAndGetTags(List<Long> tagIds) {
+        List<Tag> tags = tagRepository.findAllById(tagIds);
+        if (tags.size() != tagIds.size()) {
+            throw  new BusinessException(ErrorCode.TAG_NOT_FOUND);
+        }
+        Map<Long, Tag> tagMap = tags.stream().collect(Collectors.toMap(Tag::getId, Function.identity()));
+
+        List<Tag> orderedTags = new ArrayList<>();
         for (Long tagId : tagIds) {
-            reviewTagRepository.save(CafeReviewTag.create(reviewId,cafeId,tagId));
+            Tag tag = tagMap.get(tagId);
+            if (tag == null) {
+                throw new BusinessException(ErrorCode.TAG_NOT_FOUND);
+            }
+            if (!tag.isActive()) {
+                throw new BusinessException(ErrorCode.INVALID_TAG);
+            }
+            orderedTags.add(tag);
         }
+        return orderedTags;
     }
 
-    private void removeReviewTags(Long reviewId,List<Long> removeTagIds){
-        if (removeTagIds.isEmpty()){
-            return;
+    private void validateDuplicateTagIds(List<Long> tagIds) {
+        Set<Long> uniqueTagIds = new HashSet<>(tagIds);
+        if (uniqueTagIds.size() != tagIds.size()) {
+            throw new BusinessException(ErrorCode.TAG_NOT_FOUND);
         }
-        List<CafeReviewTag> reviewTags = reviewTagRepository.findAllByReviewId(reviewId);
-
-        List<CafeReviewTag> targets = reviewTags.stream().filter(reviewTag -> removeTagIds.contains(reviewTag.getTagId())).toList();
-
-        reviewTagRepository.deleteAll(targets);
-    }
-
-    private void increaseTagAggregates(Long cafeId, List<Long> tagIds) {
-        for (Long tagId : tagIds) {
-            tagAggregateService.increase(cafeId,tagId);
-        }
-    }
-
-    private void decreaseTagAggregates(Long cafeId, List<Long> tagIds) {
-        for (Long tagId : tagIds) {
-            tagAggregateService.decrease(cafeId,tagId);
-        }
-    }
-
-    private List<Long> getCurrentTagIds(Long reviewId){
-        return reviewTagRepository.findAllByReviewId(reviewId).stream().map(CafeReviewTag::getTagId).distinct().toList();
-    }
-
-    private List<Long> getDistinctTagIds(List<Long> tagIds) {
-        if (tagIds == null || tagIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return tagIds.stream().distinct().toList();
-    }
-
-    private List<Long> getTagIdsToAdd(List<Long> currentTagIds, List<Long> newTagIds) {
-        Set<Long> currentTagIdSet = Set.copyOf(currentTagIds);
-
-        return newTagIds.stream().filter(tagId -> !currentTagIdSet.remove(tagId)).toList();
-    }
-
-    private List<Long> getTagIdsToRemove(List<Long> currentTagIds, List<Long> newTagIds) {
-        Set<Long> newTagIdSet = Set.copyOf(currentTagIds);
-
-        return currentTagIds.stream().filter(tagId -> !newTagIdSet.remove(tagId)).toList();
     }
 }

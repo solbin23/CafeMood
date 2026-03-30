@@ -1,8 +1,11 @@
 package com.cafe.cafeMood.review.domain;
 
+import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.common.entity.BaseEntity;
+import com.cafe.cafeMood.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,30 +19,24 @@ public class CafeReview extends BaseEntity {
     private Long id;
 
     @Column(name = "cafe_id", nullable = false)
-    private Long cafeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cafe cafe;
 
     @Column(name = "user_id",nullable = false)
-    private Long userId;
-
-    @Column(name = "rating", nullable = false)
-    private Integer rating;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @Column(name = "content", length = 2000)
     private String content;
 
-    private CafeReview(Long cafeId, Long userId, Integer rating, String content) {
-        this.cafeId = cafeId;
-        this.userId = userId;
-        this.rating = rating;
-        this.content = content;
+    @Builder
+    public CafeReview(Cafe cafe, User user, String content) {
+     this.cafe = cafe;
+     this.user = user;
+     this.content = content;
     }
 
-    public static CafeReview of(Long cafeId, Long userId, Integer rating, String content) {
-        return new CafeReview(cafeId, userId, rating, content);
-    }
-
-    public void update(Integer rating, String content) {
-        this.rating = rating;
+    public void update(String content) {
         this.content = content;
     }
 

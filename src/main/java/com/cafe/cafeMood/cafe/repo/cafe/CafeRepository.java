@@ -17,6 +17,6 @@ public interface CafeRepository extends JpaRepository<Cafe, Long> {
 
     List<Cafe> findAllByStatusNot(CafeStatus cafeStatus);
 
-    List<Cafe> findAllByStatus(CafeStatus cafeStatus);
+    List<Cafe> findByStatus(CafeStatus cafeStatus);
 
 }

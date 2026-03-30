@@ -7,25 +7,12 @@ import java.util.List;
 
 public record CafeReviewResponse(
         Long reviewId,
-        Long cafeId,
         Long userId,
-        Integer rating,
+        String writerName,
         String content,
-        List<Long> tagIds,
+        List<Long> tags,
         LocalDateTime createdAt,
         LocalDateTime updateAt
 ) {
 
-    public static CafeReviewResponse of(CafeReview cafeReview, List<Long> tagIds) {
-        return new CafeReviewResponse(
-                cafeReview.getId(),
-                cafeReview.getCafeId(),
-                cafeReview.getUserId(),
-                cafeReview.getRating(),
-                cafeReview.getContent(),
-                tagIds,
-                cafeReview.getCreatedAt(),
-                cafeReview.getUpdatedAt()
-        );
-    }
 }
