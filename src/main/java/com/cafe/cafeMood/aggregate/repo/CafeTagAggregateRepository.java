@@ -4,15 +4,16 @@ import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
 import com.cafe.cafeMood.cafe.dto.response.RecommendCafeResponse;
 import com.cafe.cafeMood.tag.dto.TagScoreSummary;
 import io.lettuce.core.dynamic.annotation.Param;
-import jakarta.persistence.LockModeType;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import java.awt.print.Pageable;
+
 import java.util.List;
-import java.util.Optional;
+
 
 public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggregate, Long> {
 

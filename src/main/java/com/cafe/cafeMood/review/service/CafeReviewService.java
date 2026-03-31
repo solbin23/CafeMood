@@ -43,7 +43,8 @@ public class CafeReviewService {
     private final CafeRepository cafeRepository;
     private final CafeTagAggregateService cafeTagAggregateService;
 
-    public Long createReview(LoginUser loginUser, Long cafeId, CafeReviewCreateRequest request) {
+    @Transactional
+    public CafeReviewResponse createReview(LoginUser loginUser, Long cafeId, CafeReviewCreateRequest request) {
         validateDuplicateTagIds(request.tagIds());
 
         User user = getUser(loginUser.userId());
@@ -67,13 +68,24 @@ public class CafeReviewService {
             tagSelectionRepository.save(CafeReviewTagSelection.of(cafeReview.getId(), tag.getId()));
             tagAggregateService.increase(cafe.getId(), tag.getId());
         }
+        List<String> tagNames = tags.stream()
+                .map(Tag::getName)
+                .toList();
 
-        return cafeReview.getId();
+        return new CafeReviewResponse(
+                cafeReview.getId(),
+                user.getId(),
+                user.getName(),
+                cafeReview.getContent(),
+                tagNames,
+                cafeReview.getCreatedAt(),
+                cafeReview.getUpdatedAt()
+        );
     }
 
 
 
-    private void updateReview(LoginUser loginUser, Long reviewId,CafeReviewUpdateRequest request) {
+    public CafeReviewResponse updateReview(LoginUser loginUser, Long reviewId, CafeReviewUpdateRequest request) {
         validateDuplicateTagIds(request.tagIds());
 
         CafeReview cafeReview = reviewRepository.findByIdAndUserId(reviewId,loginUser.userId())
@@ -117,6 +129,8 @@ public class CafeReviewService {
         }
 
         cafeReview.update(request.content());
+
+        return CafeReviewResponse.from(cafeReview,newTags);
 
     }
 

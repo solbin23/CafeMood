@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"TAG-404","태그를 찾을 수 없습니다."),
     INVALID_TAG(HttpStatus.BAD_REQUEST,"TAG-400","비활성화된 태그는 선택할 수 없습니다."),
+    DUPLICATE_TAG_SELECTION(HttpStatus.BAD_REQUEST, "TAG-400","중복된 태그는 선택할 수 없습니다."),
 
     ALREADY_REVIEWED_CAFE(HttpStatus.BAD_REQUEST,"REVIEW-400","이미 리뷰 작성한 카페입니다."),
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND,"REVIEW-404","리뷰를 찾을 수 없습니다."),
