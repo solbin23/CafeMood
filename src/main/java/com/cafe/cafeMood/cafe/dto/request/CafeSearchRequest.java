@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 
-public record RecommendCafeRequest(
+public record CafeSearchRequest(
         @NotEmpty
         List<Long> tagIds
 ) {

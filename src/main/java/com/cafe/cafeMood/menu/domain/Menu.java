@@ -1,5 +1,6 @@
 package com.cafe.cafeMood.menu.domain;
 
+import com.cafe.cafeMood.cafe.domain.cafe.Cafe;
 import com.cafe.cafeMood.common.entity.BaseEntity;
 import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
@@ -21,7 +22,11 @@ public class Menu extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cafe_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cafe_id")
+    private Cafe cafe;
+
+    @Column(name = "cafe_id", insertable = false , updatable = false)
     private Long cafeId;
 
     @Column(name = "name",nullable = false, length = 100)

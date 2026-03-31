@@ -18,11 +18,11 @@ public class CafeReview extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cafe_id", nullable = false)
+    @JoinColumn(name = "cafe_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Cafe cafe;
 
-    @Column(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 

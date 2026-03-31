@@ -32,5 +32,17 @@ public record CafeReviewResponse(
         );
     }
 
+    public static CafeReviewResponse fromT(CafeReview cafeReview,List<String> tagNames) {
+        return new CafeReviewResponse(
+                cafeReview.getId(),
+                cafeReview.getUser().getId(),
+                cafeReview.getUser().getName(),
+                cafeReview.getContent(),
+                tagNames,
+                cafeReview.getCreatedAt(),
+                cafeReview.getUpdatedAt()
+        );
+    }
+
 
 }

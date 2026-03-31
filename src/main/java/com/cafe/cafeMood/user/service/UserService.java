@@ -6,6 +6,7 @@ import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.user.domain.User;
 import com.cafe.cafeMood.common.auth.dto.LoginRequest;
+import com.cafe.cafeMood.user.domain.UserRole;
 import com.cafe.cafeMood.user.dto.request.SignUpRequest;
 import com.cafe.cafeMood.user.dto.response.LoginResponse;
 import com.cafe.cafeMood.user.dto.response.UserResponse;
@@ -31,9 +32,9 @@ public class UserService {
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 
-        User user = User.create(signUpRequest.email(), encodedPassword,signUpRequest.name(),signUpRequest.phone());
-
+       User user = User.create(signUpRequest, encodedPassword);
         return userRepository.save(user);
+
     }
 
     @Transactional(readOnly = true)

@@ -1,7 +1,8 @@
 package com.cafe.cafeMood.aggregate.repo;
 
 import com.cafe.cafeMood.aggregate.domain.CafeTagAggregate;
-import com.cafe.cafeMood.cafe.dto.response.RecommendCafeResponse;
+import com.cafe.cafeMood.cafe.dto.response.CafeSearchFlat;
+import com.cafe.cafeMood.cafe.dto.response.CafeSearchResponse;
 import com.cafe.cafeMood.tag.dto.TagScoreSummary;
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -36,7 +37,7 @@ public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggrega
     int decrementScore(@Param("cafeId") Long cafeId, @Param("tagId") Long tagId);
 
     @Query("""
-        select new com.cafe.cafeMood.cafe.dto.response.RecommendCafeResponse(
+        select new com.cafe.cafeMood.cafe.dto.response.CafeSearchFlat(
         c.id,
         c.name, 
         c.address, 
@@ -48,17 +49,17 @@ public interface CafeTagAggregateRepository extends JpaRepository<CafeTagAggrega
         group by c.id, c.name, c.address
         order by sum(cta.score) desc, c.id desc 
     """)
-    List<RecommendCafeResponse> findRecommendCafes(@Param("tagIds") List<Long> tagIds, Pageable pageable);
+    List<CafeSearchFlat> searchCafesByTags(@Param("tagIds") List<Long> tagIds, Pageable pageable);
 
     @Query("""
-      select new com.cafe.cafeMood.tag.dto.TagScoreSummary(t.id,t.name,cta.score)
+      select new com.cafe.cafeMood.tag.dto.TagScoreSummary(cta.cafeId,t.id,t.name,cta.score)
       from CafeTagAggregate cta
       join Tag t on t.id = cta.tagId
-      where cta.cafeId = :cafeId
+      where cta.cafeId = :cafeIds
       and cta.score > 0
       and t.status = com.cafe.cafeMood.tag.domain.TagStatus.ACTIVE
-      order by cta.score desc , t.sortOrder asc , t.id asc
+      order by cta.cafeId asc, cta.score desc , t.sortOrder asc , t.id asc
 """)
-    List<TagScoreSummary> findTopTagsByCafeId(@Param("cafeId") Long cafeId, Pageable pageable);
+    List<TagScoreSummary> findTopTagsByCafeId(@Param("cafeIds") List<Long> cafeIds);
 }
 

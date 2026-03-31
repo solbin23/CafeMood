@@ -1,6 +1,7 @@
 package com.cafe.cafeMood.user.domain;
 
 import com.cafe.cafeMood.common.entity.BaseEntity;
+import com.cafe.cafeMood.user.dto.request.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,9 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "users",
-uniqueConstraints = {@UniqueConstraint(name = "uk_user_login_id", columnNames = "login_id"),
-@UniqueConstraint(name = "uk_user_email",columnNames = "email")})
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
@@ -43,14 +42,29 @@ public class User extends BaseEntity {
         this.role = role;
 
     }
-    private User(String email, String password,UserRole role){
+    private User(String email, String password,String phone,UserRole role){
         this.email = email;
         this.password = password;
+        this.phone = phone;
         this.role = role;
     }
 
-    public static User create(String email, String password, String name, String phone) {
-        return new User(email, password, name, phone, UserRole.USER);
+    public static User owner(String email, String password, String name, String phone,UserRole role) {
+        return new User(email, password, name, phone, role );
+    }
+    public static User create(String email, String password, String phone, UserRole role) {
+     return new User(email, password,phone, role);
+    }
+
+    public static User create(SignUpRequest request, String encodedPassword) {
+        if (request.role() == UserRole.OWNER) {
+            return owner(request.email(),
+                    encodedPassword,
+                    request.name(),
+                    request.phone(),
+                    request.role());
+        }
+        return create(request.email(),encodedPassword,request.phone(),request.role());
     }
 
 
