@@ -32,7 +32,7 @@ public class CafeSearchController {
                 .body(ApiResponse.success(code, response));
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<CafeSearchResponse>>> searchCafes(@Valid @RequestBody CafeSearchRequest request) {
 
         List<CafeSearchResponse> response = cafeService.searchCafeMood(request);
