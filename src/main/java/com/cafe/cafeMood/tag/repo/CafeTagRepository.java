@@ -10,9 +10,6 @@ import java.util.Optional;
 
 public interface CafeTagRepository extends JpaRepository<Tag, Long> {
 
-//    Optional<Tag> findByCafeIdAndTagId(Long cafeId,Long tagId);
-//    List<Tag> findByCafeIdOrderByScoreDesc(Long cafeId);
-//    void deleteByCafeIdAndTagIdNotIn(Long cafeId, List<Long> tagIds);
     List<Tag> findByStatus(TagStatus status);
     List<Tag> findByCategoryAndStatus(TagCategory category, TagStatus status);
     Optional<Tag> findByName(String name);
