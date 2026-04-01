@@ -12,14 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cafe")
+@RequestMapping("/cafe/owner")
 @RequiredArgsConstructor
 public class OwnerCafeController {
 
     private final OwnerCafeService ownerCafeService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<CafeResponse>> createCafe(Long ownerId,@Valid @RequestBody CafeCreateRequest request) {
+    @PostMapping("/{ownerId}")
+    public ResponseEntity<ApiResponse<CafeResponse>> createCafe(@PathVariable Long ownerId,@Valid @RequestBody CafeCreateRequest request) {
        CafeResponse cafeResponse =  ownerCafeService.createCafe(ownerId,request);
         ResponseCode code = ResponseCode.CREATED;
 

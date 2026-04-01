@@ -8,8 +8,6 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record MenuCreateRequest(
-        @NotNull
-        Long cafeId,
         @NotBlank
         @Size(max = 100)
         String name,

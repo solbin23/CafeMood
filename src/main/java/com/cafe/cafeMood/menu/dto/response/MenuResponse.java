@@ -8,6 +8,7 @@ import java.util.List;
 
 public record MenuResponse(
         Long id,
+        Long cafeId,
         String name,
         MenuCategory category,
         Integer price,
@@ -20,6 +21,7 @@ public record MenuResponse(
     public static MenuResponse of(Menu menu) {
         return new MenuResponse(
                 menu.getId(),
+                menu.getCafeId(),
                 menu.getName(),
                 menu.getCategory(),
                 menu.getPrice(),

@@ -23,7 +23,7 @@ public class Menu extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cafe_id")
+    @JoinColumn(name = "cafe_id",nullable = false)
     private Cafe cafe;
 
     @Column(name = "cafe_id", insertable = false , updatable = false)
@@ -57,8 +57,8 @@ public class Menu extends BaseEntity {
     @Column(name = "highlight")
     private List<String> highlight;
 
-    private Menu(Long cafeId, String name, MenuCategory category, Integer price, String description, String imageUrl, Integer displayOrder,  List<String> highlight) {
-        this.cafeId = cafeId;
+    private Menu(Cafe cafe, String name, MenuCategory category, Integer price, String description, String imageUrl, Integer displayOrder,  List<String> highlight) {
+        this.cafe = cafe;
         this.name = name;
         this.category = category;
         this.price = price;
@@ -69,7 +69,7 @@ public class Menu extends BaseEntity {
         this.highlight = highlight == null ? new ArrayList<>() : new ArrayList<>(highlight);
     }
 
-    public static Menu create(Long cafeId,
+    public static Menu create(Cafe cafe,
                               String name,
                               MenuCategory category,
                               Integer price,
@@ -77,7 +77,7 @@ public class Menu extends BaseEntity {
                               String imageUrl,
                               Integer displayOrder,
                               List<String> highlight){
-        return new Menu(cafeId,name,category,price,description,imageUrl,displayOrder,highlight);
+        return new Menu(cafe,name,category,price,description,imageUrl,displayOrder,highlight);
     }
 
     public void updateInfo(String name, MenuCategory category, Integer price, String description, String imageUrl, Integer displayOrder, List<String> highlight) {
