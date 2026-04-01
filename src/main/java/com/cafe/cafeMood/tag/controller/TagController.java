@@ -1,6 +1,6 @@
 package com.cafe.cafeMood.tag.controller;
 
-import com.cafe.cafeMood.tag.TagService;
+import com.cafe.cafeMood.tag.service.TagService;
 import com.cafe.cafeMood.tag.domain.TagCategory;
 import com.cafe.cafeMood.tag.dto.TagResponse;
 import lombok.RequiredArgsConstructor;

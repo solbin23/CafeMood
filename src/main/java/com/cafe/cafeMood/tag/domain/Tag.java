@@ -19,6 +19,7 @@ public class Tag extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 60)
     private TagCategory category;
 
@@ -33,7 +34,7 @@ public class Tag extends BaseEntity {
     public Tag(String name, TagCategory category, TagStatus status, int sortOrder) {
         this.name = name;
         this.category = category;
-        this.status = TagStatus.ACTIVE;
+        this.status = status;
         this.sortOrder = sortOrder;
     }
 

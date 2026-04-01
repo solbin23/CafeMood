@@ -1,7 +1,8 @@
-package com.cafe.cafeMood.tag;
+package com.cafe.cafeMood.tag.service;
 
 
 import com.cafe.cafeMood.tag.domain.TagCategory;
+import com.cafe.cafeMood.tag.domain.TagStatus;
 import com.cafe.cafeMood.tag.dto.TagResponse;
 import com.cafe.cafeMood.tag.repo.CafeTagRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,13 @@ public class TagService {
 
     public List<TagResponse> getTags(TagCategory category) {
         if (category == null) {
-            return tagRepository.findByActiveTrueOrderBySortOrderAsc()
+            return tagRepository.findByStatus(TagStatus.ACTIVE)
                     .stream()
                     .map(TagResponse::from)
                     .toList();
         }
 
-        return tagRepository.findByCategoryAndActiveTrueOrderBySortOrderAsc(category)
+        return tagRepository.findByCategoryAndStatus(category,TagStatus.ACTIVE)
                 .stream()
                 .map(TagResponse::from)
                 .toList();
