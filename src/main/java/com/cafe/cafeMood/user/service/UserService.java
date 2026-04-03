@@ -5,10 +5,7 @@ import com.cafe.cafeMood.common.auth.dto.LoginUser;
 import com.cafe.cafeMood.common.exception.BusinessException;
 import com.cafe.cafeMood.common.exception.ErrorCode;
 import com.cafe.cafeMood.user.domain.User;
-import com.cafe.cafeMood.common.auth.dto.LoginRequest;
-import com.cafe.cafeMood.user.domain.UserRole;
-import com.cafe.cafeMood.user.dto.request.SignUpRequest;
-import com.cafe.cafeMood.user.dto.response.LoginResponse;
+import com.cafe.cafeMood.user.dto.request.UserSignUpRequest;
 import com.cafe.cafeMood.user.dto.response.UserResponse;
 import com.cafe.cafeMood.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +22,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public User signUp(SignUpRequest signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.email())) {
+    public User signUp(UserSignUpRequest userSignUpRequest) {
+        if (userRepository.existsByEmail(userSignUpRequest.email())) {
             throw  new BusinessException(ErrorCode.DUPLICATED_EMAIL);
         }
 
-        String encodedPassword = passwordEncoder.encode(signUpRequest.password());
+        String encodedPassword = passwordEncoder.encode(userSignUpRequest.password());
 
-       User user = User.create(signUpRequest, encodedPassword);
+       User user = User.create(userSignUpRequest, encodedPassword);
         return userRepository.save(user);
 
     }
