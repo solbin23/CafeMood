@@ -4,8 +4,8 @@ public enum CafeStatus {
     DRAFT,// 임시저장
     PENDING, //승인대기
     PUBLISHED, //게시중
-    HIDDEN, //관리자 및 점주에 의해 숨김
-    SUSPENDED,// 제재
+    HIDDEN, //관리자에 의해 숨김
+    REJECT,// 제재
     DELETED; // 삭제
 
     public boolean isDeleted() {

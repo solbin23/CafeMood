@@ -41,6 +41,9 @@ public class Cafe extends BaseEntity {
     @Column(name="status",nullable = false, length = 20)
     private CafeStatus status;
 
+    @Column(length = 500)
+    private String rejectReason;
+
     private Cafe(Long ownerId,String name, String address,String shortDesc, String phone) {
 
         if(name == null || name.trim().isEmpty()){
@@ -87,9 +90,11 @@ public class Cafe extends BaseEntity {
         this.status = CafeStatus.HIDDEN;
     }
 
-    public void suspend() {
+    public void reject(String rejectReason) {
         validateNotDeleted();
-        this.status = CafeStatus.SUSPENDED;
+        this.status = CafeStatus.REJECT;
+        this.rejectReason = rejectReason;
+
     }
 
     public void restoreDraft(){

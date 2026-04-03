@@ -27,38 +27,21 @@ public class AdminCafeService {
         return getCafesByStatusNot(CafeStatus.DELETED);
     }
 
-
-    public List<CafeResponse> getPublishCafes() {
-        return getCafesByStatus(CafeStatus.PUBLISHED);
+    public CafeResponse approveCafe(Long cafeId) {
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CAFE_NOT_FOUND)
+        );
+        cafe.publish();
+        return CafeResponse.from(cafe);
     }
 
-    public List<CafeResponse> getHiddenCafes() {
-        return getCafesByStatus(CafeStatus.HIDDEN);
-    }
+    public CafeResponse rejectCafe(Long cafeId,String rejectReason) {
+        Cafe cafe = cafeRepository.findById(cafeId).orElseThrow(() -> new BusinessException(ErrorCode.CAFE_NOT_FOUND));
 
-    public List<CafeResponse> getSuspendedCafes() {
-        return getCafesByStatus(CafeStatus.SUSPENDED);
-    }
+        cafe.reject(rejectReason);
 
-    public CafeResponse getCafe(Long cafeId){
-        return CafeResponse.from(findActiveCafe(cafeId));
+        return CafeResponse.from(cafe);
     }
-
-    @Transactional
-    public CafeResponse publishCafe(Long cafeId) {
-        return changeCafeStatus(cafeId, Cafe::publish);
-    }
-
-    @Transactional
-    public CafeResponse HideCafe(Long cafeId) {
-        return changeCafeStatus(cafeId,Cafe::hide);
-    }
-
-    @Transactional
-    public CafeResponse suspendCafe(Long cafeId) {
-       return changeCafeStatus(cafeId,Cafe::suspend);
-    }
-
     @Transactional
     public void deleteCafe(Long cafeId, String deletedBy) {
        Cafe cafe = findActiveCafe(cafeId);
