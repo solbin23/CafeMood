@@ -20,6 +20,9 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "USER-400", "이미 사용 중인 이메일입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-404", "사용자를 찾을 수 없습니다."),
 
+    DUPLICATED_BUSINESS_NUMBER(HttpStatus.BAD_REQUEST,"OWNER-400","이미 사용중인 사업자등록번호 입니다."),
+    OWNER_NOT_FOUND(HttpStatus.NOT_FOUND,"OWNER-404", "오너 계정을 찾을 수 없습니다."),
+
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"TAG-404","태그를 찾을 수 없습니다."),
     INVALID_TAG(HttpStatus.BAD_REQUEST,"TAG-400","비활성화된 태그는 선택할 수 없습니다."),
     DUPLICATE_TAG_SELECTION(HttpStatus.BAD_REQUEST, "TAG-400","중복된 태그는 선택할 수 없습니다."),

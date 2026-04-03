@@ -1,5 +1,6 @@
 package com.cafe.cafeMood.user.domain;
 
+import com.cafe.cafeMood.common.convert.BooleanToYnConverter;
 import com.cafe.cafeMood.common.entity.BaseEntity;
 import com.cafe.cafeMood.user.dto.request.UserSignUpRequest;
 import jakarta.persistence.*;
@@ -36,12 +37,15 @@ public class User extends BaseEntity {
     private UserRole role;
 
     @Column(nullable = false)
+    @Convert(converter = BooleanToYnConverter.class)
     private boolean serviceTermsConsent;
 
     @Column(nullable = false)
+    @Convert(converter = BooleanToYnConverter.class)
     private boolean privacyConsent;
 
     @Column(nullable = false)
+    @Convert(converter = BooleanToYnConverter.class)
     private boolean marketingConsent;
 
     @Column(nullable = false)
@@ -72,6 +76,10 @@ public class User extends BaseEntity {
               request.marketingConsent(),
               LocalDateTime.now());
 
+    }
+
+    public static User createOwner(String email, String password, String name, String phone, boolean serviceTermsConsent, boolean privacyConsent, boolean marketingConsent) {
+        return new User(email,password,name,phone,UserRole.OWNER,serviceTermsConsent,privacyConsent,marketingConsent,LocalDateTime.now());
     }
 
 
