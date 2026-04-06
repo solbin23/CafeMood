@@ -47,7 +47,7 @@ public class SwaggerConfig {
     public GroupedOpenApi ownerApi() {
         return GroupedOpenApi.builder()
                 .group("owner-api")
-                .pathsToMatch("/cafe/owner/**","/cafe/mood/**")
+                .pathsToMatch("/cafe/owner/**")
                 .build();
     }
 
@@ -73,6 +73,14 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("tag-api")
                 .pathsToMatch("/cafe/tags/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi searchApi(){
+        return GroupedOpenApi.builder()
+                .group("search-api")
+                .pathsToMatch("/cafe/search/**")
                 .build();
     }
 }

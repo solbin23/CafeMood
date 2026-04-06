@@ -21,7 +21,7 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cafe/mood")
+@RequestMapping("/cafe/search")
 public class CafeSearchController {
 
     private final UserCafeService cafeService;
@@ -36,7 +36,7 @@ public class CafeSearchController {
                 .body(ApiResponse.success(code, response));
     }
 
-    @PostMapping("/search")
+    @PostMapping("/moods")
     public ResponseEntity<ApiResponse<List<CafeSearchResponse>>> searchCafes(@Valid @RequestBody CafeSearchRequest request) {
 
         List<CafeSearchResponse> response = cafeService.searchCafeMood(request);
