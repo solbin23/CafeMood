@@ -8,6 +8,7 @@ import com.cafe.cafeMood.cafe.dto.response.CafeSearchResponse;
 import com.cafe.cafeMood.cafe.service.UserCafeService;
 import com.cafe.cafeMood.common.response.ApiResponse;
 import com.cafe.cafeMood.common.response.ResponseCode;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "검색 및 조회 유저컨트롤러")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cafe/mood")

@@ -2,12 +2,14 @@ package com.cafe.cafeMood.common.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "공통 응답 객체")
 public class ApiResponse<T>{
 
     private final String code;

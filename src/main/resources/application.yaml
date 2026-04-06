@@ -1,8 +1,12 @@
 server:
-  servlet:
-    context-path: /api
   port: 8080
+  address: 0.0.0.0
 spring:
+  springdoc:
+    swagger-ui:
+      enabled: true
+      api-docs:
+        enabled: true
   jpa:
     show_sql: true
     hibernate:

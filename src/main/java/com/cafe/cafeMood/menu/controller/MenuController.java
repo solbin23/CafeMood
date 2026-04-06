@@ -18,12 +18,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cafe/mood")
+@RequestMapping("/cafe/menus")
 public class MenuController {
 
     private final MenuService menuService;
 
-    @PostMapping("/owner/{cafeId}/menus")
+    @PostMapping("/owner/{cafeId}")
     public ResponseEntity<ApiResponse<MenuResponse>> createMenu(HttpServletRequest request, @PathVariable Long cafeId, @Valid @RequestBody MenuCreateRequest menuCreateRequest) {
 
         LoginUser loginUser = AuthUtil.getLoginUser(request);
@@ -35,7 +35,7 @@ public class MenuController {
 
     }
 
-    @GetMapping("/owner/{cafeId}/menus")
+    @GetMapping("/owner/{cafeId}")
     public ResponseEntity<ApiResponse<List<MenuResponse>>> getMenus(HttpServletRequest request, @PathVariable Long cafeId) {
         LoginUser loginUser = AuthUtil.getLoginUser(request);
         List<MenuResponse> response = menuService.getMenu(loginUser,cafeId);

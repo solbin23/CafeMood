@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cafe")
+@RequestMapping("/cafe/reviews")
 public class ReviewController {
 
     private final CafeReviewService reviewService;
 
-    @PostMapping("/mood/{cafeId}/reviews")
+    @PostMapping("/{cafeId}")
     public ResponseEntity<ApiResponse<CafeReviewResponse>> createReview(HttpServletRequest request, @PathVariable Long cafeId, @Valid @RequestBody CafeReviewCreateRequest reviewCreateRequest) {
         LoginUser loginUser = AuthUtil.getLoginUser(request);
 
@@ -32,7 +32,7 @@ public class ReviewController {
                 .body(ApiResponse.success(ResponseCode.CREATED, response));
     }
 
-    @PutMapping("/reviews/{reviewId}")
+    @PutMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<CafeReviewResponse>> updateReview(HttpServletRequest request,@PathVariable Long reviewId,@Valid @RequestBody CafeReviewUpdateRequest reviewUpdateRequest) {
         LoginUser loginUser = AuthUtil.getLoginUser(request);
         CafeReviewResponse response = reviewService.updateReview(loginUser,reviewId, reviewUpdateRequest);
@@ -41,7 +41,7 @@ public class ReviewController {
     }
 
 
-    @DeleteMapping("/reviews/{reviewId}")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<CafeReviewResponse>> deleteReview(HttpServletRequest request,@PathVariable Long reviewId) {
         LoginUser loginUser = AuthUtil.getLoginUser(request);
 
